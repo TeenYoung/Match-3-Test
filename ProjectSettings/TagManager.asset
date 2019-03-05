@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Color_Black
+  - Color_Bule
+  - Color_Green
+  - Color_Purple
+  - Color_Red
   layers:
   - Default
   - TransparentFX
