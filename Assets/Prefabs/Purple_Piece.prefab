@@ -95,6 +95,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   KeyUp: {fileID: 21300000, guid: 6b4f5e26493cc554ab9d4912b36595df, type: 3}
   KeyDown: {fileID: 21300000, guid: 3a174d72ef8287c4a91bed6b4f0c4bba, type: 3}
+  moveSpeed: 0.2
 --- !u!61 &6668561042780119279
 BoxCollider2D:
   m_ObjectHideFlags: 0
