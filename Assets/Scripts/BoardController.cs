@@ -16,12 +16,20 @@ public class BoardController : MonoBehaviour
     {
         SetupBoard();
 
+        // Check if potential match exists. If not, shuffle the board.
+        List<GameObject> firstPotentialMatchedPieces = CheckAllPotentialMatches();
+        while (firstPotentialMatchedPieces.Count == 0)
+        {
+            Debug.Log("Suffle");
+            ShuffleTheBoard();
+            firstPotentialMatchedPieces = CheckAllPotentialMatches();
+        }
+
         // For test and debug uses only
         List<GameObject> allMatchedPieces = CheckAllMatches();
         Debug.Log("Macthed pieces count:" + allMatchedPieces.Count);
 
-        List<GameObject> hintPieces = CheckPotentialMatch(2, 2);
-        Debug.Log("Hint:" + hintPieces.Count);
+        Debug.Log("Hint:" + firstPotentialMatchedPieces[0].name);
     }
 
     // Create a board (without any initial match)
@@ -58,6 +66,37 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    // Shuffle the board using Fisher-Yates shuffle algorithm
+    void ShuffleTheBoard()
+    {
+        int pieceNum = boardWidth * boardHeight;
+
+        for (int i = 0; i < pieceNum-1; i++) //i < pieceNum-1 because shuffle the last piece is meaningless in this algorithm
+        {
+            int j = Random.Range(i, pieceNum);
+
+            // Conver i & j to (x,y) coordinates
+            int xOfI = i / boardWidth;
+            int yOfI = i % boardWidth;
+            int xOfJ = j / boardWidth;
+            int yOfJ = j % boardWidth;
+
+            Swap(xOfI, yOfI, xOfJ, yOfJ);
+        }
+    }
+
+    // Swap two pieces in the 2D array and the board
+    void Swap(int x1, int y1, int x2, int y2)
+    {
+        GameObject temp = pieces[x1, y1];
+
+        pieces[x1, y1] = pieces[x2, y2];
+        pieces[x1, y1].transform.position = new Vector3(x1, y1, 0);
+
+        pieces[x2, y2] = temp;
+        pieces[x2, y2].transform.position = new Vector3(x2, y2, 0);
+    }
+
     // Check all matches in the board, return a list of all matched pieces on the board.
     List<GameObject> CheckAllMatches()
     {
@@ -68,19 +107,42 @@ public class BoardController : MonoBehaviour
             for (int j = 0; j < boardHeight; j++)
             {
                 List<GameObject> piecesToAdd = CheckMatch(i, j, pieces);
-
-                // Prevent duplication
-                foreach (GameObject piece in piecesToAdd)
+                if (piecesToAdd.Count != 0)
                 {
-                    if (!allMatchedPieces.Contains(piece))
+                    // Prevent duplication
+                    foreach (GameObject piece in piecesToAdd)
                     {
-                        allMatchedPieces.Add(piece);
+                        if (!allMatchedPieces.Contains(piece))
+                        {
+                            allMatchedPieces.Add(piece);
+                        }
                     }
                 }
             }
         }
 
         return allMatchedPieces;
+    }
+
+    // Check all potential matches in the board, return all pieces of the first potential match
+    List<GameObject> CheckAllPotentialMatches()
+    {
+        List<GameObject> firstPotentialMatchedPieces = new List<GameObject>();
+
+        for (int i = 0; i < boardWidth; i++)
+        {
+            for (int j = 0; j < boardHeight; j++)
+            {
+                List<GameObject> piecesToAdd = CheckPotentialMatch(i, j);
+                if (piecesToAdd.Count != 0)
+                {
+                    firstPotentialMatchedPieces.AddRange(piecesToAdd);
+                    break;
+                }
+            }
+        }
+
+        return firstPotentialMatchedPieces;
     }
 
     // Check if the prefab will result in an initial match should it be instantiated at (x,y).
