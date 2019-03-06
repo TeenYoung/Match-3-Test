@@ -10,6 +10,12 @@ public class BoardController : MonoBehaviour
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
 
+    public static BoardController board;
+
+    private void Awake()
+    {
+        board = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -86,15 +92,17 @@ public class BoardController : MonoBehaviour
     }
 
     // Swap two pieces in the 2D array and the board
-    void Swap(int x1, int y1, int x2, int y2)
+    public void Swap(int x1, int y1, int x2, int y2)
     {
         GameObject temp = pieces[x1, y1];
 
         pieces[x1, y1] = pieces[x2, y2];
         pieces[x1, y1].transform.position = new Vector3(x1, y1, 0);
+        pieces[x1, y1].GetComponent<PieceController>().UpdatePoses();
 
         pieces[x2, y2] = temp;
         pieces[x2, y2].transform.position = new Vector3(x2, y2, 0);
+        pieces[x2, y2].GetComponent<PieceController>().UpdatePoses();
     }
 
     // Check all matches in the board, return a list of all matched pieces on the board.
@@ -171,7 +179,7 @@ public class BoardController : MonoBehaviour
     }
 
     // Check if the piece at (x,y) is in a match, return all matched pieces of this match. Only check upwards and rightwards if fourDirection is false.
-    List<GameObject> CheckMatch(int x, int y, GameObject[,] pieces, bool fourDirections = false)
+    List<GameObject> CheckMatch(int x, int y, GameObject[,] pieces, bool allCases = false)
     {
         List<GameObject> matchedPieces = new List<GameObject>();
 
@@ -193,8 +201,8 @@ public class BoardController : MonoBehaviour
             }
         }
 
-        // Check other two directions if required.
-        if (fourDirections)
+        // Check other four cases if required.
+        if (allCases)
         {
             //Check column match downwards
             if (y > 1)
@@ -202,6 +210,15 @@ public class BoardController : MonoBehaviour
                 if (pieces[x, y].tag == pieces[x, y - 1].tag && pieces[x, y].tag == pieces[x, y - 2].tag)
                 {
                     matchedPieces.AddRange(new GameObject[] { pieces[x, y], pieces[x, y - 1], pieces[x, y - 2] });
+                }
+            }
+
+            //Check column match both sides
+            if (y > 0 && y < boardHeight - 1)
+            {
+                if (pieces[x, y].tag == pieces[x, y - 1].tag && pieces[x, y].tag == pieces[x, y + 1].tag)
+                {
+                    matchedPieces.AddRange(new GameObject[] { pieces[x, y], pieces[x, y - 1], pieces[x, y + 1] });
                 }
             }
 
@@ -213,6 +230,17 @@ public class BoardController : MonoBehaviour
                     matchedPieces.AddRange(new GameObject[] { pieces[x, y], pieces[x - 1, y], pieces[x - 2, y] });
                 }
             }
+
+            //Check row match both sides
+            if (x > 0 && x < boardWidth - 1)
+            {
+                if (pieces[x, y].tag == pieces[x - 1, y].tag && pieces[x, y].tag == pieces[x + 1, y].tag)
+                {
+                    matchedPieces.AddRange(new GameObject[] { pieces[x, y], pieces[x - 1, y], pieces[x + 1, y] });
+                }
+            }
+
+
         }
 
 
