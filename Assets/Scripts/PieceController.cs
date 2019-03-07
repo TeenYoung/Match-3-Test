@@ -154,16 +154,27 @@ public class PieceController : MonoBehaviour
         // Left buttons up on mouse up
         GetComponent<SpriteRenderer>().sprite = KeyUp;
 
-        // Confirm the swap if it's in a swap position
+        // Try swap if it's in a swap position
         foreach (Vector3Int neighborPos in neighborPoses)
         {
             if ( myCollider.bounds.Contains(neighborPos))
             {
-                BoardController.board.Swap(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+                // Simulate the swap and see if it forms a match or matches
+                bool willMatch = BoardController.board.TryMatch(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+
+                // Comfirm the swap if it will form a match or matches
+                if (willMatch)
+                {
+                    BoardController.board.Swap(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+                }
+                
             }
         }
 
-        // Move everything back if mouse up while moving
+        // Sort the board
+        BoardController.board.SortBoard();
+
+        // Move everything back if swap is not confirmed or mouse up while pieces are still moving
         MoveBack(1);
         foreach (GameObject neighbor in neighbors)
         {

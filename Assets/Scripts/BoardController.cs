@@ -27,7 +27,8 @@ public class BoardController : MonoBehaviour
         while (firstPotentialMatchedPieces.Count == 0)
         {
             Debug.Log("Suffle");
-            ShuffleTheBoard();
+            ShuffleBoard();
+            SortBoard();
             firstPotentialMatchedPieces = CheckAllPotentialMatches();
         }
 
@@ -73,7 +74,7 @@ public class BoardController : MonoBehaviour
     }
 
     // Shuffle the board using Fisher-Yates shuffle algorithm
-    void ShuffleTheBoard()
+    void ShuffleBoard()
     {
         int pieceNum = boardWidth * boardHeight;
 
@@ -91,17 +92,52 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    // Swap two pieces in the 2D array and the board
+    // Clean matches, refill empty tiles, repeat till no matched on board.
+    public void SortBoard()
+    {
+        List<GameObject> matchedPieces = CheckAllMatches();
+
+        while (matchedPieces.Count > 0)
+        {
+            ClearMatchedPieces();
+            RefillBoard();
+
+            matchedPieces.Clear();
+            //matchedPieces.AddRange(CheckAllMatches());
+        };
+    }
+
+    //
+    void ClearMatchedPieces()
+    {
+        Debug.Log("Clear");
+    }
+
+    // 
+    void RefillBoard()
+    {
+        Debug.Log("Refill");
+    }
+
+    // Create an alterative 2D array with certain two pieces swaped
+    GameObject[,] SimulateSwap(int x1, int y1, int x2, int y2)
+    {
+        GameObject[,] piecesAfterSwap = (GameObject[,])pieces.Clone();
+        piecesAfterSwap[x1, y1] = pieces[x2, y2];
+        piecesAfterSwap[x2, y2] = pieces[x1, y1];
+
+        return piecesAfterSwap;
+    }
+
+    // Swap two pieces in the 2D array, then update their new positions.
     public void Swap(int x1, int y1, int x2, int y2)
     {
         GameObject temp = pieces[x1, y1];
 
         pieces[x1, y1] = pieces[x2, y2];
-        pieces[x1, y1].transform.position = new Vector3(x1, y1, 0);
         pieces[x1, y1].GetComponent<PieceController>().UpdatePoses();
 
         pieces[x2, y2] = temp;
-        pieces[x2, y2].transform.position = new Vector3(x2, y2, 0);
         pieces[x2, y2].GetComponent<PieceController>().UpdatePoses();
     }
 
@@ -176,6 +212,39 @@ public class BoardController : MonoBehaviour
         }
 
         return false;
+    }
+
+    // Simulate a swap between (x1,y1) and (x2,y2), check if any match will be formed.
+    public bool TryMatch (int x1, int y1, int x2, int y2)
+    {
+        bool isMatch;
+
+        // Simulate a swap
+        GameObject[,] piecesAfterSwap = SimulateSwap(x1, y1, x2, y2);
+
+        // Check match at x1,y1
+        List<GameObject> matchedPieces = CheckMatch(x1, y1, piecesAfterSwap, true);
+
+        if (matchedPieces.Count > 0)
+        {
+            isMatch = true;
+        }
+        else
+        {
+            // Check match at x2,y2
+            matchedPieces.AddRange(CheckMatch(x2, y2, piecesAfterSwap, true));
+
+            if (matchedPieces.Count > 0)
+            {
+                isMatch = true;
+            }
+            else
+            {
+                isMatch = false;
+            }
+        }
+
+        return isMatch;
     }
 
     // Check if the piece at (x,y) is in a match, return all matched pieces of this match. Only check upwards and rightwards if fourDirection is false.
@@ -258,11 +327,9 @@ public class BoardController : MonoBehaviour
             if (pieces[x, y].tag != pieces[x, y + 1].tag)
             {
                 // Simulate upwards swap
-                GameObject[,] piecesAfterSwapUp = (GameObject[,])pieces.Clone();
-                piecesAfterSwapUp[x, y] = pieces[x, y + 1];
-                piecesAfterSwapUp[x, y + 1] = pieces[x, y];
+                GameObject[,] piecesAfterSwapUp = SimulateSwap(x, y, x, y + 1);
 
-                // Check matches at four directions on the 1st swaped piece
+                // Check matches at all cases on the 1st swaped piece
                 List<GameObject> piecesToAdd = CheckMatch(x, y, piecesAfterSwapUp, true);
                 if (piecesToAdd.Count != 0)
                 {
@@ -279,7 +346,7 @@ public class BoardController : MonoBehaviour
                 }
                 else
                 {
-                    // Check matches at four directions on the 2nd swaped piece
+                    // Check matches at all cases on the 2nd swaped piece
                     piecesToAdd = CheckMatch(x, y + 1, piecesAfterSwapUp, true);
                     if (piecesToAdd.Count != 0)
                     {
@@ -305,9 +372,7 @@ public class BoardController : MonoBehaviour
             if (pieces[x, y].tag != pieces[x + 1, y].tag)
             {
                 // Simulate rightwards swap
-                GameObject[,] piecesAfterSwapRight = (GameObject[,])pieces.Clone();
-                piecesAfterSwapRight[x, y] = pieces[x + 1, y];
-                piecesAfterSwapRight[x + 1, y] = pieces[x, y];
+                GameObject[,] piecesAfterSwapRight = SimulateSwap(x, y, x + 1, y);
 
                 // Check matches at four directions on the 1st swaped piece
                 List<GameObject> piecesToAdd = CheckMatch(x, y, piecesAfterSwapRight, true);
