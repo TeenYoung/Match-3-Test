@@ -99,24 +99,64 @@ public class BoardController : MonoBehaviour
 
         while (matchedPieces.Count > 0)
         {
-            ClearMatchedPieces();
-            RefillBoard();
+            ClearAndRefill(matchedPieces);
 
             matchedPieces.Clear();
-            //matchedPieces.AddRange(CheckAllMatches());
+            //matchedPieces.AddRange(CheckAllMatches()); //Uncomment this after Clear and Refill is working
         };
     }
+        
 
-    //
-    void ClearMatchedPieces()
+    // Clear pieces in the incoming list then create equivalent new pieces to fill the board
+    void ClearAndRefill(List<GameObject> matchedPieces)
     {
-        Debug.Log("Clear");
+        // Find all (will be) empty tiles, then destroy all GameObjects in the incoming list
+        List<Vector3Int> emptyTiles = new List<Vector3Int>();
+        foreach (GameObject piece in matchedPieces)
+        {
+            int x = piece.GetComponent<PieceController>().originalPos.x;
+            int y = piece.GetComponent<PieceController>().originalPos.y;
+            Vector3Int emptyTile = new Vector3Int(x, y, 0);
+            emptyTiles.Add(emptyTile);
+            pieces[x, y] = null;
+            Destroy(piece);
+        }
+        
+        // Arrange positions on top of the column
+        List<Vector3Int> createPoses = new List<Vector3Int>();
+        foreach (Vector3Int emptyTile in emptyTiles)
+        {
+            int index = emptyTiles.IndexOf(emptyTile);
+            int yOffset = 0;
+            for (int i = 0; i < index; i++)
+            {
+                if (emptyTiles[i].x == emptyTile.x)
+                {
+                    yOffset++;
+                }
+            }
+            Vector3Int createPos = new Vector3Int(emptyTile.x, boardHeight + yOffset, 0);
+            createPoses.Add(createPos);
+        }
+
+        // Instantiate random piece on each create position
+        foreach (Vector3Int createPos in createPoses)
+        {
+            GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
+            GameObject piece = Instantiate(randomPiecePrefab, createPos, Quaternion.identity, this.transform);
+        }
+
     }
 
-    // 
-    void RefillBoard()
+    // Move every pieces above tile(x,y) one tile down (Only in the 2D array NOT the board)
+    void DropInto(int x, int y)
     {
-        Debug.Log("Refill");
+        for (int i = y; i < boardHeight - 1; i++)
+        {
+            pieces[x, i + 1].transform.position = new Vector3 (x,i,0);
+            pieces[x, i] = pieces[x, i + 1];
+        }
+
     }
 
     // Create an alterative 2D array with certain two pieces swaped

@@ -6,9 +6,9 @@ public class PieceController : MonoBehaviour
 {
     public Sprite KeyUp, KeyDown;
     public float moveSpeed;
+    public Vector3Int originalPos;
 
-    private Vector3 zOffset = new Vector3 (0,0,10);
-    private Vector3Int originalPos;
+    private Vector3 zOffset = new Vector3 (0,0,9);
     private BoxCollider2D myCollider;
     private List<Vector3Int> neighborPoses;
     private List<GameObject> neighbors;
@@ -147,8 +147,6 @@ public class PieceController : MonoBehaviour
         transform.position = transform.position + delta * speed;
     }
 
-
-
     private void OnMouseUp()
     {
         // Left buttons up on mouse up
@@ -166,13 +164,13 @@ public class PieceController : MonoBehaviour
                 if (willMatch)
                 {
                     BoardController.board.Swap(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+
+                    // Sort the board after a swap
+                    BoardController.board.SortBoard();
                 }
                 
             }
         }
-
-        // Sort the board
-        BoardController.board.SortBoard();
 
         // Move everything back if swap is not confirmed or mouse up while pieces are still moving
         MoveBack(1);
