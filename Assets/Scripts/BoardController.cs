@@ -102,7 +102,7 @@ public class BoardController : MonoBehaviour
             ClearAndRefill(matchedPieces);
 
             matchedPieces.Clear();
-            //matchedPieces.AddRange(CheckAllMatches()); //Uncomment this after Clear and Refill is working
+            matchedPieces.AddRange(CheckAllMatches());
         };
     }
         
@@ -111,52 +111,49 @@ public class BoardController : MonoBehaviour
     void ClearAndRefill(List<GameObject> matchedPieces)
     {
         // Find all (will be) empty tiles, then destroy all GameObjects in the incoming list
-        List<Vector3Int> emptyTiles = new List<Vector3Int>();
         foreach (GameObject piece in matchedPieces)
         {
             int x = piece.GetComponent<PieceController>().originalPos.x;
             int y = piece.GetComponent<PieceController>().originalPos.y;
-            Vector3Int emptyTile = new Vector3Int(x, y, 0);
-            emptyTiles.Add(emptyTile);
             pieces[x, y] = null;
             Destroy(piece);
         }
         
-        // Arrange positions on top of the column
-        List<Vector3Int> createPoses = new List<Vector3Int>();
-        foreach (Vector3Int emptyTile in emptyTiles)
+        // Collapse existing pieces on board
+        for (int i = 0; i < boardWidth; i++)
         {
-            int index = emptyTiles.IndexOf(emptyTile);
-            int yOffset = 0;
-            for (int i = 0; i < index; i++)
+            int columnEmptyTilesCount = 0;
+
+            for (int j = 0; j < boardHeight; j++)
             {
-                if (emptyTiles[i].x == emptyTile.x)
+                if (pieces[i, j] == null)
                 {
-                    yOffset++;
+                    columnEmptyTilesCount++;
+                }
+                else if (columnEmptyTilesCount > 0)
+                {
+                    pieces[i, j - columnEmptyTilesCount] = pieces[i, j];
+                    pieces[i, j] = null;
+                    pieces[i, j - columnEmptyTilesCount].transform.position = new Vector3(i, j - columnEmptyTilesCount, 0);
+                    pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().UpdatePoses();
                 }
             }
-            Vector3Int createPos = new Vector3Int(emptyTile.x, boardHeight + yOffset, 0);
-            createPoses.Add(createPos);
         }
 
-        // Instantiate random piece on each create position
-        foreach (Vector3Int createPos in createPoses)
+        // Refill empty tiles
+        for (int i = 0; i < boardWidth; i++)
         {
-            GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
-            GameObject piece = Instantiate(randomPiecePrefab, createPos, Quaternion.identity, this.transform);
+            for (int j = 0; j < boardHeight; j++)
+            {
+                if (pieces[i, j] == null)
+                {
+                    GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
+                    GameObject piece = Instantiate(randomPiecePrefab, new Vector2(i, j), Quaternion.identity, this.transform);
+                    pieces[i, j] = piece;
+                    piece.GetComponent<PieceController>().UpdatePoses();
+                }
+            }
         }
-
-    }
-
-    // Move every pieces above tile(x,y) one tile down (Only in the 2D array NOT the board)
-    void DropInto(int x, int y)
-    {
-        for (int i = y; i < boardHeight - 1; i++)
-        {
-            pieces[x, i + 1].transform.position = new Vector3 (x,i,0);
-            pieces[x, i] = pieces[x, i + 1];
-        }
-
     }
 
     // Create an alterative 2D array with certain two pieces swaped

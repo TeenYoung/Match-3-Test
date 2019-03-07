@@ -167,8 +167,7 @@ public class PieceController : MonoBehaviour
 
                     // Sort the board after a swap
                     BoardController.board.SortBoard();
-                }
-                
+                } 
             }
         }
 
