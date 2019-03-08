@@ -6,13 +6,14 @@ public class PieceController : MonoBehaviour
 {
     public Sprite KeyUp, KeyDown;
     public float moveSpeed;
-    public Vector3Int originalPos;
+    public Vector3Int myPosition;
 
     private Vector3 zOffset = new Vector3 (0,0,9);
     private BoxCollider2D myCollider;
     private List<Vector3Int> neighborPoses;
     private List<GameObject> neighbors;
     private List<Vector3Int> destinations;
+    BoardController board = BoardController.board;
 
     // Start is called before the first frame update
     void Start()
@@ -25,31 +26,31 @@ public class PieceController : MonoBehaviour
     // Record current position of this piece and find all neighbor positions
     public void UpdatePoses()
     {
-        originalPos = Vector3Int.RoundToInt(transform.position);
+        myPosition = Vector3Int.RoundToInt(transform.position);
 
         // Find positions of all neighbor pieces
         neighborPoses = new List<Vector3Int>();
-        if (originalPos.x < BoardController.board.boardWidth - 1)
+        if (myPosition.x < BoardController.board.boardWidth - 1)
         {
-            Vector3Int neighborRight = originalPos + Vector3Int.right;
+            Vector3Int neighborRight = myPosition + Vector3Int.right;
             neighborPoses.Add(neighborRight);
         }
 
-        if (originalPos.x > 0)
+        if (myPosition.x > 0)
         {
-            Vector3Int neighborLeft = originalPos + Vector3Int.left;
+            Vector3Int neighborLeft = myPosition + Vector3Int.left;
             neighborPoses.Add(neighborLeft);
         }
 
-        if (originalPos.y < BoardController.board.boardHeight - 1)
+        if (myPosition.y < BoardController.board.boardHeight - 1)
         {
-            Vector3Int neighborUp = originalPos + Vector3Int.up;
+            Vector3Int neighborUp = myPosition + Vector3Int.up;
             neighborPoses.Add(neighborUp);
         }
 
-        if (originalPos.y > 0)
+        if (myPosition.y > 0)
         {
-            Vector3Int neighborDown = originalPos + Vector3Int.down;
+            Vector3Int neighborDown = myPosition + Vector3Int.down;
             neighborPoses.Add(neighborDown);
         }
 
@@ -64,7 +65,7 @@ public class PieceController : MonoBehaviour
         // Set possible distinations for selected piece
         destinations = new List<Vector3Int>
         {
-            originalPos
+            myPosition
         };
         destinations.AddRange(neighborPoses);
 
@@ -89,6 +90,7 @@ public class PieceController : MonoBehaviour
             float distance = Vector3.Distance(position, mousePosOnBoard);
             distances.Add(distance);
         }
+
         float minDistance = distances[0];
         int indexOfMinDis = 0;
         for (int i = 0; i < distances.Count; i++)
@@ -104,12 +106,12 @@ public class PieceController : MonoBehaviour
         Vector3 destination = destinations[indexOfMinDis];
 
         // If the mouse is at a diagonal angle, keep the draging piece where it is.
-        Vector3 deltaMouse = mousePosOnBoard - originalPos;
+        Vector3 deltaMouse = mousePosOnBoard - myPosition;
         float deltaX = Mathf.Abs(deltaMouse.x);
         float deltaY = Mathf.Abs(deltaMouse.y);
         if (deltaX/deltaY > 0.5f && deltaX / deltaY < 2f)
         {
-            destination = originalPos;
+            destination = myPosition;
         }
 
         // Move it to the closest destination
@@ -120,7 +122,7 @@ public class PieceController : MonoBehaviour
         GameObject swapPiece = BoardController.board.pieces[Vector3Int.RoundToInt(destination).x, Vector3Int.RoundToInt(destination).y];
 
         // Move that piece to the start position of draging piece
-        swapPiece.GetComponent<PieceController>().MoveTo(originalPos, moveSpeed);
+        swapPiece.GetComponent<PieceController>().MoveTo(myPosition, moveSpeed);
 
         // Move all other neibor pieces back to their position
         List<GameObject> noneSwapPieces = new List<GameObject>();
@@ -137,15 +139,29 @@ public class PieceController : MonoBehaviour
     public void MoveTo(Vector3 moveDestination, float speed)
     {
         Vector3 delta = moveDestination - transform.position;
-        transform.position = transform.position + delta * speed;
+        transform.position += delta * speed;
     }
 
     // This method will be called while cancle swaping
     public void MoveBack(float speed)
     {
-        Vector3 delta = originalPos - transform.position;
-        transform.position = transform.position + delta * speed;
+        Vector3 delta = myPosition - transform.position;
+        transform.position += delta * speed;
     }
+
+    // Swap position with another piece at incoming position, then update both positions.
+    public void Swap(Vector3Int otherPos)
+    {
+        
+        GameObject temp = gameObject;
+
+        board.pieces[myPosition.x, myPosition.y] = board.pieces[otherPos.x, otherPos.y];
+        board.pieces[myPosition.x, myPosition.y].GetComponent<PieceController>().UpdatePoses();
+
+        board.pieces[otherPos.x, otherPos.y] = temp;
+        UpdatePoses();
+    }
+
 
     private void OnMouseUp()
     {
@@ -158,15 +174,14 @@ public class PieceController : MonoBehaviour
             if ( myCollider.bounds.Contains(neighborPos))
             {
                 // Simulate the swap and see if it forms a match or matches
-                bool willMatch = BoardController.board.TryMatch(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+                bool willMatch = BoardController.board.TryMatch(myPosition.x, myPosition.y, neighborPos.x, neighborPos.y);
 
                 // Comfirm the swap if it will form a match or matches
                 if (willMatch)
                 {
-                    BoardController.board.Swap(originalPos.x, originalPos.y, neighborPos.x, neighborPos.y);
+                    Swap(neighborPos);
 
-                    // Sort the board after a swap
-                    BoardController.board.SortBoard();
+                    board.StartShifting();
                 } 
             }
         }

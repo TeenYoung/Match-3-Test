@@ -9,6 +9,7 @@ public class BoardController : MonoBehaviour
     public int boardHeight;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
+    public float clearDelay, collapseDelay, refillDelay, resortDelay;
 
     public static BoardController board;
 
@@ -28,7 +29,7 @@ public class BoardController : MonoBehaviour
         {
             Debug.Log("Suffle");
             ShuffleBoard();
-            SortBoard();
+            StartCoroutine(SortBoard());
             firstPotentialMatchedPieces = CheckAllPotentialMatches();
         }
 
@@ -88,73 +89,85 @@ public class BoardController : MonoBehaviour
             int xOfJ = j / boardWidth;
             int yOfJ = j % boardWidth;
 
-            Swap(xOfI, yOfI, xOfJ, yOfJ);
+            // Swap the two
+            pieces[xOfI, yOfI].GetComponent<PieceController>().Swap(new Vector3Int(xOfJ, yOfJ, 0));
         }
     }
 
-    // Clean matches, refill empty tiles, repeat till no matched on board.
-    public void SortBoard()
+    public void StartShifting()
     {
+        StartCoroutine(SortBoard());
+    }
+
+    // Clean matches, refill empty tiles, repeat till no matched on board.
+    public IEnumerator SortBoard()
+    {
+
         List<GameObject> matchedPieces = CheckAllMatches();
 
         while (matchedPieces.Count > 0)
         {
-            ClearAndRefill(matchedPieces);
+            // Highlight pieces to clear
+            foreach (GameObject matchedPiece in matchedPieces)
+            {
+                matchedPiece.GetComponent<SpriteRenderer>().sprite = matchedPiece.GetComponent<PieceController>().KeyDown;
+            }
 
+            // Distory them and clear them from the 2D array after a delay
+            yield return new WaitForSeconds(clearDelay);
+            foreach (GameObject piece in matchedPieces)
+            {
+                int x = piece.GetComponent<PieceController>().myPosition.x;
+                int y = piece.GetComponent<PieceController>().myPosition.y;
+                pieces[x, y] = null;
+                Destroy(piece);
+            }
+
+            // Collapse existing pieces on board after a delay
+            yield return new WaitForSeconds(collapseDelay);
+            for (int i = 0; i < boardWidth; i++)
+            {
+                int columnEmptyTilesCount = 0;
+
+                for (int j = 0; j < boardHeight; j++)
+                {
+                    if (pieces[i, j] == null)
+                    {
+                        columnEmptyTilesCount++;
+                    }
+                    else if (columnEmptyTilesCount > 0)
+                    {
+                        pieces[i, j - columnEmptyTilesCount] = pieces[i, j];
+                        pieces[i, j] = null;
+                        pieces[i, j - columnEmptyTilesCount].transform.position = new Vector3(i, j - columnEmptyTilesCount, 0);
+                        pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().UpdatePoses();
+                    }
+                }
+            }
+
+            // Refill empty tiles after a delay
+            yield return new WaitForSeconds(refillDelay);
+            for (int i = 0; i < boardWidth; i++)
+            {
+                for (int j = 0; j < boardHeight; j++)
+                {
+                    if (pieces[i, j] == null)
+                    {
+                        GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
+                        GameObject piece = Instantiate(randomPiecePrefab, new Vector2(i, j), Quaternion.identity, this.transform);
+                        pieces[i, j] = piece;
+                        piece.GetComponent<PieceController>().UpdatePoses();
+                    }
+                }
+            }
+
+            // Check for matches again after a delay
+            yield return new WaitForSeconds(resortDelay);
             matchedPieces.Clear();
             matchedPieces.AddRange(CheckAllMatches());
         };
     }
-        
 
-    // Clear pieces in the incoming list then create equivalent new pieces to fill the board
-    void ClearAndRefill(List<GameObject> matchedPieces)
-    {
-        // Find all (will be) empty tiles, then destroy all GameObjects in the incoming list
-        foreach (GameObject piece in matchedPieces)
-        {
-            int x = piece.GetComponent<PieceController>().originalPos.x;
-            int y = piece.GetComponent<PieceController>().originalPos.y;
-            pieces[x, y] = null;
-            Destroy(piece);
-        }
-        
-        // Collapse existing pieces on board
-        for (int i = 0; i < boardWidth; i++)
-        {
-            int columnEmptyTilesCount = 0;
-
-            for (int j = 0; j < boardHeight; j++)
-            {
-                if (pieces[i, j] == null)
-                {
-                    columnEmptyTilesCount++;
-                }
-                else if (columnEmptyTilesCount > 0)
-                {
-                    pieces[i, j - columnEmptyTilesCount] = pieces[i, j];
-                    pieces[i, j] = null;
-                    pieces[i, j - columnEmptyTilesCount].transform.position = new Vector3(i, j - columnEmptyTilesCount, 0);
-                    pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().UpdatePoses();
-                }
-            }
-        }
-
-        // Refill empty tiles
-        for (int i = 0; i < boardWidth; i++)
-        {
-            for (int j = 0; j < boardHeight; j++)
-            {
-                if (pieces[i, j] == null)
-                {
-                    GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
-                    GameObject piece = Instantiate(randomPiecePrefab, new Vector2(i, j), Quaternion.identity, this.transform);
-                    pieces[i, j] = piece;
-                    piece.GetComponent<PieceController>().UpdatePoses();
-                }
-            }
-        }
-    }
 
     // Create an alterative 2D array with certain two pieces swaped
     GameObject[,] SimulateSwap(int x1, int y1, int x2, int y2)
@@ -164,18 +177,6 @@ public class BoardController : MonoBehaviour
         piecesAfterSwap[x2, y2] = pieces[x1, y1];
 
         return piecesAfterSwap;
-    }
-
-    // Swap two pieces in the 2D array, then update their new positions.
-    public void Swap(int x1, int y1, int x2, int y2)
-    {
-        GameObject temp = pieces[x1, y1];
-
-        pieces[x1, y1] = pieces[x2, y2];
-        pieces[x1, y1].GetComponent<PieceController>().UpdatePoses();
-
-        pieces[x2, y2] = temp;
-        pieces[x2, y2].GetComponent<PieceController>().UpdatePoses();
     }
 
     // Check all matches in the board, return a list of all matched pieces on the board.
@@ -345,8 +346,6 @@ public class BoardController : MonoBehaviour
                     matchedPieces.AddRange(new GameObject[] { pieces[x, y], pieces[x - 1, y], pieces[x + 1, y] });
                 }
             }
-
-
         }
 
 
@@ -449,4 +448,14 @@ public class BoardController : MonoBehaviour
 
         return potentialMatchedPieces;
     }
+
+    //To Do List
+    //  Show the process of Clear, collapse, and refill
+    //Stop accept user inputs while board shifting using state machine
+    //Show Scores/Goal, turns left, timer
+    //Mainmenu
+    //  Mute option
+    //Sound effects
+    //Background img
+
 }
