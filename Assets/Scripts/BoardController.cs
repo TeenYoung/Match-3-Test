@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum State
 {
@@ -16,13 +17,16 @@ public class BoardController : MonoBehaviour
 {
 
     public int boardWidth, boardHeight;
-    public int moveCount = 0;
+    public int moveCount, tileClearGoal;
+    public Text moveCountText, scoreText;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
     public float clearDelay, collapseDelay, refillDelay, resortDelay, 
         acceptInputDelay, hintDelay, shuffleDelay;
     public static BoardController board;
     public State boardState = State.initializing;
+
+    private int tileClearCount;
 
     private void Awake()
     {
@@ -39,6 +43,12 @@ public class BoardController : MonoBehaviour
     // Create a board (without any initial match)
     void SetupBoard()
     {
+        // Reset Counts & Scores
+        moveCount = 0;
+        moveCountText.text = moveCount.ToString();
+        tileClearCount = 0;
+        scoreText.text = tileClearCount.ToString() + "/" + tileClearGoal.ToString();
+
         // Create a 2D array to store pieces and determine its size.
         pieces = new GameObject[boardWidth, boardHeight];
 
@@ -125,6 +135,10 @@ public class BoardController : MonoBehaviour
         // Clean matches, refill empty tiles, repeat till no matched on board.
         while (matchedPieces.Count > 0)
         {
+            // Record and show score
+            tileClearCount += matchedPieces.Count;
+            scoreText.text = tileClearCount.ToString() + "/" + tileClearGoal.ToString();
+
             // Highlight pieces to clear
             foreach (GameObject matchedPiece in matchedPieces)
             {
@@ -514,7 +528,6 @@ public class BoardController : MonoBehaviour
     }
 
     //To Do List
-    //Show Scores/Goal, turns left, timer
     //Mainmenu
     //  Mute option
     //Sound effects
