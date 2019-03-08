@@ -232,13 +232,12 @@ MonoBehaviour:
   - {fileID: 1754966916897180546, guid: 159de430653c3d6418cfd4901e0c55b1, type: 3}
   - {fileID: 2655575149846235288, guid: 3945e5bc752c69048a20353a6e371c76, type: 3}
   - {fileID: 7725848825012954202, guid: 2f3e376211e27974186dd167bf77ae70, type: 3}
-  clearDelay: 0.35
+  clearDelay: 0.3
   collapseDelay: 0.2
   refillDelay: 0.1
   resortDelay: 0.3
   acceptInputDelay: 0.1
   hintDelay: 1.8
-  repeatHintDelay: 1.2
   shuffleDelay: 1.2
   boardState: 0
 --- !u!4 &1689537494
