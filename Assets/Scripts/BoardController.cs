@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum State
+{
+    initializing,
+    stable,
+    shifting
+}
+
+
 public class BoardController : MonoBehaviour
 {
 
@@ -9,9 +17,9 @@ public class BoardController : MonoBehaviour
     public int boardHeight;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
-    public float clearDelay, collapseDelay, refillDelay, resortDelay;
-
+    public float clearDelay, collapseDelay, refillDelay, resortDelay, acceptInputDelay;
     public static BoardController board;
+    public State boardState = State.initializing;
 
     private void Awake()
     {
@@ -32,6 +40,9 @@ public class BoardController : MonoBehaviour
             StartCoroutine(SortBoard());
             firstPotentialMatchedPieces = CheckAllPotentialMatches();
         }
+
+        // Finish setup and start to accept user inputs
+        boardState = State.stable;
 
         // For test and debug uses only
         List<GameObject> allMatchedPieces = CheckAllMatches();
@@ -79,7 +90,7 @@ public class BoardController : MonoBehaviour
     {
         int pieceNum = boardWidth * boardHeight;
 
-        for (int i = 0; i < pieceNum-1; i++) //i < pieceNum-1 because shuffle the last piece is meaningless in this algorithm
+        for (int i = 0; i < pieceNum-1; i++) //i < pieceNum-1 because shuffle the last piece is meaningless
         {
             int j = Random.Range(i, pieceNum);
 
@@ -94,17 +105,20 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    // Stop accepting user inputs and sort the board
     public void StartShifting()
     {
+        boardState = State.shifting;
         StartCoroutine(SortBoard());
     }
 
-    // Clean matches, refill empty tiles, repeat till no matched on board.
+    // Sort the board then enable user inputs again
     public IEnumerator SortBoard()
     {
-
+        // Find all matches
         List<GameObject> matchedPieces = CheckAllMatches();
 
+        // Clean matches, refill empty tiles, repeat till no matched on board.
         while (matchedPieces.Count > 0)
         {
             // Highlight pieces to clear
@@ -166,8 +180,11 @@ public class BoardController : MonoBehaviour
             matchedPieces.Clear();
             matchedPieces.AddRange(CheckAllMatches());
         };
-    }
 
+        // Start to accept user inputs again after a small delay
+        yield return new WaitForSeconds(acceptInputDelay);
+        boardState = State.stable;
+    }
 
     // Create an alterative 2D array with certain two pieces swaped
     GameObject[,] SimulateSwap(int x1, int y1, int x2, int y2)
@@ -450,7 +467,8 @@ public class BoardController : MonoBehaviour
     }
 
     //To Do List
-    //  Show the process of Clear, collapse, and refill
+    //Show a hint after a while
+    //Shuffle the board if no hint found
     //Stop accept user inputs while board shifting using state machine
     //Show Scores/Goal, turns left, timer
     //Mainmenu
