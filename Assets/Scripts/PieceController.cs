@@ -22,13 +22,13 @@ public class PieceController : MonoBehaviour
     {   
         myCollider = GetComponent<BoxCollider2D>();
 
-        UpdatePoses();
+        UpdatePoses((int)transform.position.x,(int)transform.position.y);
     }
 
     // Record current position of this piece and find all neighbor positions
-    public void UpdatePoses()
+    public void UpdatePoses(int x, int y)
     {
-        myPosition = Vector3Int.RoundToInt(transform.position);
+        myPosition = new Vector3Int(x,y,0);
 
         // Find positions of all neighbor pieces
         neighborPoses = new List<Vector3Int>();
@@ -127,8 +127,7 @@ public class PieceController : MonoBehaviour
             }
 
             // Move it to the closest destination
-            Vector3 delta = destination - transform.position;
-            transform.position = transform.position + delta * moveSpeed;
+            MoveTo(destination,moveSpeed);
 
             // Find the piece at the closest destination
             GameObject swapPiece = BoardController.board.pieces[Vector3Int.RoundToInt(destination).x, Vector3Int.RoundToInt(destination).y];
@@ -142,7 +141,7 @@ public class PieceController : MonoBehaviour
             noneSwapPieces.Remove(swapPiece);
             foreach (GameObject noneSwapPiece in noneSwapPieces)
             {
-                noneSwapPiece.GetComponent<PieceController>().MoveBack(moveSpeed);
+                noneSwapPiece.GetComponent<PieceController>().MoveTo(noneSwapPiece.GetComponent<PieceController>().myPosition, moveSpeed);
             }
         }
     }
@@ -168,6 +167,7 @@ public class PieceController : MonoBehaviour
                     // Comfirm the swap if it will form a match or matches, then sort the board
                     if (willMatch)
                     {
+                        board.moveCount++;
                         Swap(neighborPos);
                         board.StartShifting();
                     }
@@ -175,10 +175,10 @@ public class PieceController : MonoBehaviour
             }
 
             // Move everything back if swap is not confirmed or mouse up while pieces are still moving
-            MoveBack(1);
+            StartCoroutine(Return());
             foreach (GameObject neighbor in neighbors)
             {
-                neighbor.GetComponent<PieceController>().MoveBack(1);
+                StartCoroutine(neighbor.GetComponent<PieceController>().Return()); ;
             }
         }
     }
@@ -190,11 +190,15 @@ public class PieceController : MonoBehaviour
         transform.position += delta * speed;
     }
 
-    // This method will be called while cancle swaping
-    public void MoveBack(float speed)
+    // Retrun a piece to it's position
+    public IEnumerator Return()
     {
         Vector3 delta = myPosition - transform.position;
-        transform.position += delta * speed;
+        for (float f = 1f; f >= 0; f-=0.1f)
+        {
+            transform.position += (delta * 0.1f);
+            yield return null;
+        }
     }
 
     // Swap position with another piece at incoming position, then update both positions.
@@ -204,11 +208,12 @@ public class PieceController : MonoBehaviour
         GameObject temp = gameObject;
 
         board.pieces[myPosition.x, myPosition.y] = board.pieces[otherPos.x, otherPos.y];
-        board.pieces[myPosition.x, myPosition.y].GetComponent<PieceController>().UpdatePoses();
+        board.pieces[myPosition.x, myPosition.y].GetComponent<PieceController>().UpdatePoses(myPosition.x, myPosition.y);
+        //board.pieces[myPosition.x, myPosition.y].transform.position = new Vector3(myPosition.x, myPosition.y, 0);
 
         board.pieces[otherPos.x, otherPos.y] = temp;
-        UpdatePoses();
+        UpdatePoses(otherPos.x, otherPos.y);
+        //transform.position = otherPos;
     }
-
 
 }

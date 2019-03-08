@@ -6,18 +6,21 @@ public enum State
 {
     initializing,
     stable,
-    shifting
+    shifting,
+    shuffling,
+    idle
 }
 
 
 public class BoardController : MonoBehaviour
 {
 
-    public int boardWidth;
-    public int boardHeight;
+    public int boardWidth, boardHeight;
+    public int moveCount = 0;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
-    public float clearDelay, collapseDelay, refillDelay, resortDelay, acceptInputDelay;
+    public float clearDelay, collapseDelay, refillDelay, resortDelay, 
+        acceptInputDelay, hintDelay, repeatHintDelay, shuffleDelay;
     public static BoardController board;
     public State boardState = State.initializing;
 
@@ -30,25 +33,7 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         SetupBoard();
-
-        // Check if potential match exists. If not, shuffle the board.
-        List<GameObject> firstPotentialMatchedPieces = CheckAllPotentialMatches();
-        while (firstPotentialMatchedPieces.Count == 0)
-        {
-            Debug.Log("Suffle");
-            ShuffleBoard();
-            StartCoroutine(SortBoard());
-            firstPotentialMatchedPieces = CheckAllPotentialMatches();
-        }
-
-        // Finish setup and start to accept user inputs
-        boardState = State.stable;
-
-        // For test and debug uses only
-        List<GameObject> allMatchedPieces = CheckAllMatches();
-        Debug.Log("Macthed pieces count:" + allMatchedPieces.Count);
-
-        Debug.Log("Hint:" + firstPotentialMatchedPieces[0].name);
+        StartShifting();
     }
 
     // Create a board (without any initial match)
@@ -76,9 +61,6 @@ public class BoardController : MonoBehaviour
                 // Instantiate the piece prefab as a child of the board. 
                 GameObject piece = Instantiate(randomPiecePrefab, coordinate, Quaternion.identity, this.transform);
 
-                // Show the position of the piece after its name in hierarchy.
-                piece.name += coordinate.ToString();
-
                 // Store the piece into the 2D array
                 pieces[i, j] = piece;
             }
@@ -88,6 +70,8 @@ public class BoardController : MonoBehaviour
     // Shuffle the board using Fisher-Yates shuffle algorithm
     void ShuffleBoard()
     {
+        boardState = State.shuffling;
+
         int pieceNum = boardWidth * boardHeight;
 
         for (int i = 0; i < pieceNum-1; i++) //i < pieceNum-1 because shuffle the last piece is meaningless
@@ -95,25 +79,35 @@ public class BoardController : MonoBehaviour
             int j = Random.Range(i, pieceNum);
 
             // Conver i & j to (x,y) coordinates
-            int xOfI = i / boardWidth;
-            int yOfI = i % boardWidth;
-            int xOfJ = j / boardWidth;
-            int yOfJ = j % boardWidth;
+            int xOfI = i / boardHeight;
+            int yOfI = i % boardHeight;
+            int xOfJ = j / boardHeight;
+            int yOfJ = j % boardHeight;
 
             // Swap the two
             pieces[xOfI, yOfI].GetComponent<PieceController>().Swap(new Vector3Int(xOfJ, yOfJ, 0));
         }
+
+        for (int i = 0; i < boardWidth; i++)
+        {
+            for (int j = 0; j < boardHeight; j++)
+            {
+                StartCoroutine(pieces[i, j].GetComponent<PieceController>().Return());
+            }
+        }
+
+        boardState = State.idle;
     }
 
     // Stop accepting user inputs and sort the board
     public void StartShifting()
     {
         boardState = State.shifting;
-        StartCoroutine(SortBoard());
+        StartCoroutine(SortBoardCoroutine());
     }
 
     // Sort the board then enable user inputs again
-    public IEnumerator SortBoard()
+    public IEnumerator SortBoardCoroutine()
     {
         // Find all matches
         List<GameObject> matchedPieces = CheckAllMatches();
@@ -153,8 +147,8 @@ public class BoardController : MonoBehaviour
                     {
                         pieces[i, j - columnEmptyTilesCount] = pieces[i, j];
                         pieces[i, j] = null;
-                        pieces[i, j - columnEmptyTilesCount].transform.position = new Vector3(i, j - columnEmptyTilesCount, 0);
-                        pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().UpdatePoses();
+                        pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().UpdatePoses(i, j - columnEmptyTilesCount);
+                        StartCoroutine(pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().Return());
                     }
                 }
             }
@@ -170,7 +164,7 @@ public class BoardController : MonoBehaviour
                         GameObject randomPiecePrefab = piecePrefabs[Random.Range(0, piecePrefabs.Length)];
                         GameObject piece = Instantiate(randomPiecePrefab, new Vector2(i, j), Quaternion.identity, this.transform);
                         pieces[i, j] = piece;
-                        piece.GetComponent<PieceController>().UpdatePoses();
+                        piece.GetComponent<PieceController>().UpdatePoses(i, j);
                     }
                 }
             }
@@ -184,6 +178,9 @@ public class BoardController : MonoBehaviour
         // Start to accept user inputs again after a small delay
         yield return new WaitForSeconds(acceptInputDelay);
         boardState = State.stable;
+
+        // Check for hints and suffle the board if nothing found
+        StartCoroutine(ShowHintCoroutine(hintDelay));
     }
 
     // Create an alterative 2D array with certain two pieces swaped
@@ -226,7 +223,7 @@ public class BoardController : MonoBehaviour
     // Check all potential matches in the board, return all pieces of the first potential match
     List<GameObject> CheckAllPotentialMatches()
     {
-        List<GameObject> firstPotentialMatchedPieces = new List<GameObject>();
+        List<GameObject> firstPotentialMatch = new List<GameObject>();
 
         for (int i = 0; i < boardWidth; i++)
         {
@@ -235,13 +232,13 @@ public class BoardController : MonoBehaviour
                 List<GameObject> piecesToAdd = CheckPotentialMatch(i, j);
                 if (piecesToAdd.Count != 0)
                 {
-                    firstPotentialMatchedPieces.AddRange(piecesToAdd);
-                    break;
+                    firstPotentialMatch.AddRange(piecesToAdd);
+                    return firstPotentialMatch;
                 }
             }
         }
 
-        return firstPotentialMatchedPieces;
+        return null;
     }
 
     // Check if the prefab will result in an initial match should it be instantiated at (x,y).
@@ -302,7 +299,7 @@ public class BoardController : MonoBehaviour
         return isMatch;
     }
 
-    // Check if the piece at (x,y) is in a match, return all matched pieces of this match. Only check upwards and rightwards if fourDirection is false.
+    // Check if the piece at (x,y) is in a match, return all matched pieces of this match. Only check upwards and rightwards if allCases is false.
     List<GameObject> CheckMatch(int x, int y, GameObject[,] pieces, bool allCases = false)
     {
         List<GameObject> matchedPieces = new List<GameObject>();
@@ -466,10 +463,46 @@ public class BoardController : MonoBehaviour
         return potentialMatchedPieces;
     }
 
+    // Show hint after a delay
+    public IEnumerator ShowHintCoroutine(float hintDelay)
+    {
+        int previousMoveCount = moveCount;
+
+        yield return new WaitForSeconds(hintDelay);
+
+        if (boardState == State.stable && moveCount == previousMoveCount)
+        {
+            List<GameObject> firstPotentialMatch = CheckAllPotentialMatches();
+
+            while (firstPotentialMatch == null)
+            {
+                Debug.Log("Suffle");
+                ShuffleBoard();
+                while (boardState == State.shuffling)
+                {
+                    yield return new WaitForSeconds(.1f);
+                }
+                yield return new WaitForSeconds(shuffleDelay);
+
+                StartShifting();
+                while (boardState == State.shifting)
+                {
+                    yield return new WaitForSeconds(.1f);
+                }
+
+                firstPotentialMatch = CheckAllPotentialMatches();
+            }
+
+            for (int i = 0; i < firstPotentialMatch.Count; i++)
+            {
+                firstPotentialMatch[i].GetComponent<SpriteRenderer>().sprite = firstPotentialMatch[i].GetComponent<PieceController>().KeyDown;
+            }
+
+            StartCoroutine(ShowHintCoroutine(repeatHintDelay));
+        }
+    }
+
     //To Do List
-    //Show a hint after a while
-    //Shuffle the board if no hint found
-    //Stop accept user inputs while board shifting using state machine
     //Show Scores/Goal, turns left, timer
     //Mainmenu
     //  Mute option

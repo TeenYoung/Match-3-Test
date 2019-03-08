@@ -225,6 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardWidth: 6
   boardHeight: 10
+  moveCount: 0
   piecePrefabs:
   - {fileID: 775817000570379325, guid: 30addfba622481c408d46961f05b7f97, type: 3}
   - {fileID: 345552285825895848, guid: f1e30946d11fe4a40a5cbc28c1c5fdbe, type: 3}
@@ -236,6 +237,9 @@ MonoBehaviour:
   refillDelay: 0.1
   resortDelay: 0.3
   acceptInputDelay: 0.1
+  hintDelay: 1.8
+  repeatHintDelay: 1.2
+  shuffleDelay: 1.2
   boardState: 0
 --- !u!4 &1689537494
 Transform:
