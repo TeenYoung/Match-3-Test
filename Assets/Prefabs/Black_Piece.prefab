@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7400433951952204455}
   - component: {fileID: 2822694768005786218}
   - component: {fileID: 171920736230570137}
+  - component: {fileID: 3008519662400405913}
   m_Layer: 0
   m_Name: Black_Piece
   m_TagString: Color_Black
@@ -96,6 +97,8 @@ MonoBehaviour:
   KeyUp: {fileID: 21300000, guid: 81b3074dcae14c8418b9fcb23983a41e, type: 3}
   KeyDown: {fileID: 21300000, guid: 49daa4d0a0f47e84bb15173252de898e, type: 3}
   moveSpeed: 0.2
+  myPosition: {x: 0, y: 0, z: 0}
+  animator: {fileID: 3008519662400405913}
 --- !u!61 &171920736230570137
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -122,3 +125,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &3008519662400405913
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775817000570379325}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1307d126c8f5fe745a9d689467f434a6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

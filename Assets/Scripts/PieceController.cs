@@ -7,6 +7,7 @@ public class PieceController : MonoBehaviour
     public Sprite KeyUp, KeyDown;
     public float moveSpeed;
     public Vector3Int myPosition;
+    public Animator animator;
 
     private Vector3 zOffset = new Vector3 (0,0,9);
     private BoxCollider2D myCollider;
@@ -209,11 +210,9 @@ public class PieceController : MonoBehaviour
 
         board.pieces[myPosition.x, myPosition.y] = board.pieces[otherPos.x, otherPos.y];
         board.pieces[myPosition.x, myPosition.y].GetComponent<PieceController>().UpdatePoses(myPosition.x, myPosition.y);
-        //board.pieces[myPosition.x, myPosition.y].transform.position = new Vector3(myPosition.x, myPosition.y, 0);
 
         board.pieces[otherPos.x, otherPos.y] = temp;
         UpdatePoses(otherPos.x, otherPos.y);
-        //transform.position = otherPos;
     }
 
 }

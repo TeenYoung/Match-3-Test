@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3326904507605144869}
   - component: {fileID: 8575666462176503500}
   - component: {fileID: 452258057297284850}
+  - component: {fileID: 9050046765294812613}
   m_Layer: 0
   m_Name: Blue_Piece
   m_TagString: Color_Bule
@@ -96,6 +97,8 @@ MonoBehaviour:
   KeyUp: {fileID: 21300000, guid: b3f2c875f265a0449b25b09fc976582b, type: 3}
   KeyDown: {fileID: 21300000, guid: a3616b99874bb14409da47e2e57364eb, type: 3}
   moveSpeed: 0.2
+  myPosition: {x: 0, y: 0, z: 0}
+  animator: {fileID: 9050046765294812613}
 --- !u!61 &452258057297284850
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -122,3 +125,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &9050046765294812613
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345552285825895848}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 33b0a33c59494464fbaface55fd14663, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

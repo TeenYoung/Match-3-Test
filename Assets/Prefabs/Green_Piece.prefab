@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3260673701716055877}
   - component: {fileID: 5609809233982892328}
   - component: {fileID: 1510781348485940996}
+  - component: {fileID: 3253533773179450423}
   m_Layer: 0
   m_Name: Green_Piece
   m_TagString: Color_Green
@@ -96,6 +97,8 @@ MonoBehaviour:
   KeyUp: {fileID: 21300000, guid: fff9526531dc904478f87e25f6054788, type: 3}
   KeyDown: {fileID: 21300000, guid: 8c09e2b45cb7cf64683c185c3d00d769, type: 3}
   moveSpeed: 0.2
+  myPosition: {x: 0, y: 0, z: 0}
+  animator: {fileID: 3253533773179450423}
 --- !u!61 &1510781348485940996
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -122,3 +125,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &3253533773179450423
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754966916897180546}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7f2a303a33649df4fa0312f15a5f4c14, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

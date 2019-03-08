@@ -20,7 +20,7 @@ public class BoardController : MonoBehaviour
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
     public float clearDelay, collapseDelay, refillDelay, resortDelay, 
-        acceptInputDelay, hintDelay, repeatHintDelay, shuffleDelay;
+        acceptInputDelay, hintDelay, shuffleDelay;
     public static BoardController board;
     public State boardState = State.initializing;
 
@@ -103,6 +103,16 @@ public class BoardController : MonoBehaviour
     public void StartShifting()
     {
         boardState = State.shifting;
+
+        // Stop hint animation
+        for (int i = 0; i < boardWidth; i++)
+        {
+            for (int j = 0; j < boardHeight; j++)
+            {
+                pieces[i, j].GetComponent<Animator>().SetBool("isHint", false);
+            }
+        }
+
         StartCoroutine(SortBoardCoroutine());
     }
 
@@ -118,7 +128,7 @@ public class BoardController : MonoBehaviour
             // Highlight pieces to clear
             foreach (GameObject matchedPiece in matchedPieces)
             {
-                matchedPiece.GetComponent<SpriteRenderer>().sprite = matchedPiece.GetComponent<PieceController>().KeyDown;
+                matchedPiece.GetComponent<Animator>().SetTrigger("isMatched");
             }
 
             // Distory them and clear them from the 2D array after a delay
@@ -463,20 +473,22 @@ public class BoardController : MonoBehaviour
         return potentialMatchedPieces;
     }
 
-    // Show hint after a delay
+    // Show hint after a delay, shuffle the board if no potential match found
     public IEnumerator ShowHintCoroutine(float hintDelay)
     {
         int previousMoveCount = moveCount;
 
+        // Wait a while before show hint
         yield return new WaitForSeconds(hintDelay);
 
+        // Continue when the board is stable and player makes no new match since this coroutine starts
         if (boardState == State.stable && moveCount == previousMoveCount)
         {
             List<GameObject> firstPotentialMatch = CheckAllPotentialMatches();
 
+            // Shuffle and shift if no potential match found, until a hint is found
             while (firstPotentialMatch == null)
             {
-                Debug.Log("Suffle");
                 ShuffleBoard();
                 while (boardState == State.shuffling)
                 {
@@ -493,12 +505,11 @@ public class BoardController : MonoBehaviour
                 firstPotentialMatch = CheckAllPotentialMatches();
             }
 
+            //  Show the hint
             for (int i = 0; i < firstPotentialMatch.Count; i++)
             {
-                firstPotentialMatch[i].GetComponent<SpriteRenderer>().sprite = firstPotentialMatch[i].GetComponent<PieceController>().KeyDown;
+                firstPotentialMatch[i].GetComponent<Animator>().SetBool("isHint", true);
             }
-
-            StartCoroutine(ShowHintCoroutine(repeatHintDelay));
         }
     }
 
