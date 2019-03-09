@@ -99,6 +99,7 @@ MonoBehaviour:
   moveSpeed: 0.2
   myPosition: {x: 0, y: 0, z: 0}
   animator: {fileID: 9050046765294812613}
+  swapBack: {fileID: 8300000, guid: 76abda64970bb764aa44b41685093072, type: 3}
 --- !u!61 &452258057297284850
 BoxCollider2D:
   m_ObjectHideFlags: 0

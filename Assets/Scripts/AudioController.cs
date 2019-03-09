@@ -4,24 +4,28 @@ using UnityEngine;
 
 public class AudioController : MonoBehaviour
 {
-    public AudioSource audioSource;
-    public AudioClip clearPieces, swapBack;
+    public AudioSource efxSource, bgmSource;
+    public static AudioController audioController = null;
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
-        
+        if (audioController == null)
+        {
+            audioController = this;
+        }
+        else if (audioController != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void SEClearPieces()
+    public void PlaySoungEffect(AudioClip clip)
     {
-        audioSource.clip = clearPieces;
-        audioSource.Play();
+        efxSource.clip = clip;
+        efxSource.Play();
     }
 
-    public void SESwapBack()
-    {
-        audioSource.clip = swapBack;
-        audioSource.Play();
-    }
 }

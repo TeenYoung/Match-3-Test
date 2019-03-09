@@ -8,6 +8,8 @@ public class PieceController : MonoBehaviour
     public float moveSpeed;
     public Vector3Int myPosition;
     public Animator animator;
+    public AudioClip swapBack;
+
 
     private Vector3 zOffset = new Vector3 (0,0,9);
     private BoxCollider2D myCollider;
@@ -177,7 +179,7 @@ public class PieceController : MonoBehaviour
                     // Play soung effect of swap back if will not match
                     else
                     {
-                        board.audioController.SESwapBack();
+                        AudioController.audioController.PlaySoungEffect(swapBack);
                     }
                 }
             }

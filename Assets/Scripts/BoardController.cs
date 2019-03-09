@@ -23,15 +23,22 @@ public class BoardController : MonoBehaviour
     public GameObject[,] pieces;
     public float clearDelay, collapseDelay, refillDelay, resortDelay, 
         acceptInputDelay, hintDelay, shuffleDelay;
-    public static BoardController board;
-    public AudioController audioController;
+    public static BoardController board = null;
     public State boardState = State.initializing;
+    public AudioClip clearPieces;
 
     private int tileClearCount;
 
     private void Awake()
     {
-        board = this;
+        if (board == null)
+        {
+            board = this;
+        }
+        else if (board != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     // Start is called before the first frame update
@@ -147,7 +154,7 @@ public class BoardController : MonoBehaviour
             }
 
             // Play sound effect for clear pieces
-            audioController.SEClearPieces();
+            AudioController.audioController.PlaySoungEffect(clearPieces);
 
             // Distory them and clear them from the 2D array after a delay
             yield return new WaitForSeconds(clearDelay);
