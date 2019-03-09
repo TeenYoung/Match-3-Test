@@ -171,7 +171,7 @@ public class PieceController : MonoBehaviour
                     if (willMatch)
                     {
                         board.moveCount++;
-                        board.moveCountText.text = board.moveCount.ToString();
+                        board.moveCountText.text = (board.moveLimit - board.moveCount).ToString();
                         Swap(neighborPos);
                         board.StartShifting();
                     }

@@ -17,8 +17,9 @@ public class BoardController : MonoBehaviour
 {
 
     public int boardWidth, boardHeight;
-    public int moveCount, tileClearGoal;
-    public Text moveCountText, scoreText;
+    public int moveLimit, moveCount, tileClearGoal;
+    public Text moveCountText, scoreText, levelEndText;
+    public GameObject levelEndPanel;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
     public float clearDelay, collapseDelay, refillDelay, resortDelay, 
@@ -48,14 +49,25 @@ public class BoardController : MonoBehaviour
         StartShifting();
     }
 
+    // Clear the board then start again
+    public void Restart()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        SetupBoard();
+        StartShifting();
+    }
+
     // Create a board (without any initial match)
     void SetupBoard()
     {
         // Reset Counts & Scores
         moveCount = 0;
-        moveCountText.text = moveCount.ToString();
+        moveCountText.text = (moveLimit-moveCount).ToString();
         tileClearCount = 0;
-        scoreText.text = tileClearCount.ToString() + "/" + tileClearGoal.ToString();
+        scoreText.text = string.Format("{0} / {1}", tileClearCount.ToString(), tileClearGoal.ToString());
 
         // Create a 2D array to store pieces and determine its size.
         pieces = new GameObject[boardWidth, boardHeight];
@@ -145,7 +157,8 @@ public class BoardController : MonoBehaviour
         {
             // Record and show score
             tileClearCount += matchedPieces.Count;
-            scoreText.text = tileClearCount.ToString() + "/" + tileClearGoal.ToString();
+            scoreText.text = string.Format("{0} / {1}", tileClearCount.ToString(), tileClearGoal.ToString());
+            
 
             // Highlight pieces to clear
             foreach (GameObject matchedPiece in matchedPieces)
@@ -210,12 +223,30 @@ public class BoardController : MonoBehaviour
             matchedPieces.AddRange(CheckAllMatches());
         };
 
-        // Start to accept user inputs again after a small delay
-        yield return new WaitForSeconds(acceptInputDelay);
-        boardState = State.stable;
+        if (tileClearCount < tileClearGoal)
+        {
+            if (moveCount < moveLimit)
+            {
+                // Start to accept user inputs again after a small delay
+                yield return new WaitForSeconds(acceptInputDelay);
+                boardState = State.stable;
 
-        // Check for hints and suffle the board if nothing found
-        StartCoroutine(ShowHintCoroutine(hintDelay));
+                // Check for hints and suffle the board if nothing found
+                StartCoroutine(ShowHintCoroutine(hintDelay));
+            }
+            else
+            {
+                levelEndText.text = "FAILED";
+                levelEndPanel.SetActive(true);
+            }
+
+        }
+        else
+        {
+            levelEndText.text = "COMPLETED";
+            levelEndPanel.SetActive(true);
+
+        }
     }
 
     // Create an alterative 2D array with certain two pieces swaped
@@ -539,9 +570,9 @@ public class BoardController : MonoBehaviour
     }
 
     //To Do List
-    //Mainmenu
+
     //  Mute option
-    //Sound effects
+
     //Background img
 
 }
