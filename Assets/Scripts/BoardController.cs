@@ -24,6 +24,7 @@ public class BoardController : MonoBehaviour
     public float clearDelay, collapseDelay, refillDelay, resortDelay, 
         acceptInputDelay, hintDelay, shuffleDelay;
     public static BoardController board;
+    public AudioController audioController;
     public State boardState = State.initializing;
 
     private int tileClearCount;
@@ -144,6 +145,9 @@ public class BoardController : MonoBehaviour
             {
                 matchedPiece.GetComponent<Animator>().SetTrigger("isMatched");
             }
+
+            // Play sound effect for clear pieces
+            audioController.SEClearPieces();
 
             // Distory them and clear them from the 2D array after a delay
             yield return new WaitForSeconds(clearDelay);

@@ -173,6 +173,12 @@ public class PieceController : MonoBehaviour
                         Swap(neighborPos);
                         board.StartShifting();
                     }
+
+                    // Play soung effect of swap back if will not match
+                    else
+                    {
+                        board.audioController.SESwapBack();
+                    }
                 }
             }
 
