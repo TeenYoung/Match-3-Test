@@ -22,8 +22,8 @@ public class BoardController : MonoBehaviour
     public GameObject levelEndPanel;
     public GameObject[] piecePrefabs;
     public GameObject[,] pieces;
-    public float clearDelay, collapseDelay, refillDelay, resortDelay, 
-        acceptInputDelay, hintDelay, shuffleDelay;
+    public float clearDelay, collapseDelay, refillDelay, resortDelay,
+        acceptInputDelay, findHintDelay, showHintDelay, shuffleDelay;
     public static BoardController board = null;
     public State boardState = State.initializing;
     public AudioClip clearPieces;
@@ -173,10 +173,13 @@ public class BoardController : MonoBehaviour
             yield return new WaitForSeconds(clearDelay);
             foreach (GameObject piece in matchedPieces)
             {
-                int x = piece.GetComponent<PieceController>().myPosition.x;
-                int y = piece.GetComponent<PieceController>().myPosition.y;
-                pieces[x, y] = null;
-                Destroy(piece);
+                if (piece != null)
+                {
+                    int x = piece.GetComponent<PieceController>().myPosition.x;
+                    int y = piece.GetComponent<PieceController>().myPosition.y;
+                    pieces[x, y] = null;
+                    Destroy(piece);
+                }
             }
 
             // Collapse existing pieces on board after a delay
@@ -232,7 +235,7 @@ public class BoardController : MonoBehaviour
                 boardState = State.stable;
 
                 // Check for hints and suffle the board if nothing found
-                StartCoroutine(ShowHintCoroutine(hintDelay));
+                StartCoroutine(ShowHintCoroutine());
             }
             else
             {
@@ -530,12 +533,12 @@ public class BoardController : MonoBehaviour
     }
 
     // Show hint after a delay, shuffle the board if no potential match found
-    public IEnumerator ShowHintCoroutine(float hintDelay)
+    public IEnumerator ShowHintCoroutine()
     {
         int previousMoveCount = moveCount;
 
         // Wait a while before show hint
-        yield return new WaitForSeconds(hintDelay);
+        yield return new WaitForSeconds(findHintDelay);
 
         // Continue when the board is stable and player makes no new match since this coroutine starts
         if (boardState == State.stable && moveCount == previousMoveCount)
@@ -561,10 +564,16 @@ public class BoardController : MonoBehaviour
                 firstPotentialMatch = CheckAllPotentialMatches();
             }
 
-            //  Show the hint
-            for (int i = 0; i < firstPotentialMatch.Count; i++)
+            // Show hint after a delay 
+            yield return new WaitForSeconds(showHintDelay);
+            if (boardState == State.stable && moveCount == previousMoveCount)
             {
-                firstPotentialMatch[i].GetComponent<Animator>().SetBool("isHint", true);
+                
+                for (int i = 0; i < firstPotentialMatch.Count; i++)
+                {
+                    firstPotentialMatch[i].GetComponent<Animator>().SetBool("isHint", true);
+                }
+
             }
         }
     }
