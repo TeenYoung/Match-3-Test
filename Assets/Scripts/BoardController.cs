@@ -578,10 +578,4 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    //To Do List
-
-    //  Mute option
-
-    //Background img
-
 }
