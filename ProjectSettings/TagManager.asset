@@ -5,10 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Color_Black
-  - Color_Bule
   - Color_Green
   - Color_Purple
   - Color_Red
+  - Color_Blue
   layers:
   - Default
   - TransparentFX

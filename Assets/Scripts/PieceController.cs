@@ -176,7 +176,7 @@ public class PieceController : MonoBehaviour
                         board.StartShifting();
                     }
 
-                    // Play soung effect of swap back if will not match
+                    // Play sound effect of swap back if will not match
                     else
                     {
                         AudioController.audioController.PlaySoungEffect(swapBack);

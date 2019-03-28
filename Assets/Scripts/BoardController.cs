@@ -28,6 +28,14 @@ public class BoardController : MonoBehaviour
     public State boardState = State.initializing;
     public AudioClip clearPieces;
 
+    //public GameObject player;
+
+    ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
+    public GameObject blackSumBoard, blueSumBoard, greenSumBoard, purpleSumBoard, redSumBoard;   //count of different color pieces, 
+
+    
+    int blackSum = 0, blueSum = 0, greenSum = 0, purpleSum = 0, redSum = 0; // To calculate how many pieces was cleared in certain color
+
     private int tileClearCount;
 
     private void Awake()
@@ -152,7 +160,7 @@ public class BoardController : MonoBehaviour
         // Find all matches
         List<GameObject> matchedPieces = CheckAllMatches();
 
-        // Clean matches, refill empty tiles, repeat till no matched on board.
+        // Clean matches, refill empty tiles, repeat till no matched on board.       
         while (matchedPieces.Count > 0)
         {
             // Record and show score
@@ -171,16 +179,43 @@ public class BoardController : MonoBehaviour
 
             // Distory them and clear them from the 2D array after a delay
             yield return new WaitForSeconds(clearDelay);
+
             foreach (GameObject piece in matchedPieces)
             {
                 if (piece != null)
                 {
+                    //count sum of matched pieces in colors
+                    switch (piece.tag)
+                    {
+                        case "Color_Black":
+                            blackSum ++;
+                            break;
+                        case "Color_Blue":
+                            blueSum ++;
+                            break;
+                        case "Color_Green":
+                            greenSum ++;
+                            break;
+                        case "Color_Purple":
+                            purpleSum ++;
+                            break;
+                        case "Color_Red":
+                            redSum ++;
+                            break;
+                    }                    
+
                     int x = piece.GetComponent<PieceController>().myPosition.x;
                     int y = piece.GetComponent<PieceController>().myPosition.y;
                     pieces[x, y] = null;
                     Destroy(piece);
                 }
             }
+            
+
+            ///show sum at certain color board ******************************unfinished, edited here when unity ready******************************
+            Debug.Log(string.Format( "black =  {0} , blue =  {1}， green = {2}, purple = {3}, red = {4}" , blackSum ,blueSum ,greenSum , purpleSum , redSum));            
+
+            //Debug.Log( "black = " + blackSum + "; blue = " + blueSum + "; green = " + greenSum + "; purple = " + purpleSum + "; red = " + redSum);
 
             // Collapse existing pieces on board after a delay
             yield return new WaitForSeconds(collapseDelay);
@@ -202,7 +237,7 @@ public class BoardController : MonoBehaviour
                         StartCoroutine(pieces[i, j - columnEmptyTilesCount].GetComponent<PieceController>().Return());
                     }
                 }
-            }
+            } 
 
             // Refill empty tiles after a delay
             yield return new WaitForSeconds(refillDelay);
@@ -219,11 +254,41 @@ public class BoardController : MonoBehaviour
                     }
                 }
             }
-
+            
             // Check for matches again after a delay
             yield return new WaitForSeconds(resortDelay);
             matchedPieces.Clear();
             matchedPieces.AddRange(CheckAllMatches());
+
+            //when no match, player active in certain order
+            if (matchedPieces.Count == 0)
+            {
+                //if attack pieces(green & red) matched , player attack
+                if(greenSum != 0 || redSum != 0)
+                {
+                    Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
+                    //player.GetComponent<Player>().Attack(greenSum, redSum);
+                }
+
+                //if move pieces ( blue & black) matched , player move
+                if (blueSum != 0 || blackSum != 0)
+                {
+                    Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
+                }
+
+                //if special pieces ( purple ) matched , player active special
+                if (purpleSum != 0)
+                {
+                    Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
+                }
+
+                //reset martched pieces sum when no match
+                blackSum = 0;
+                blueSum = 0;
+                greenSum = 0;
+                purpleSum = 0;
+                redSum = 0;
+            }
         };
 
         if (tileClearCount < tileClearGoal)
@@ -434,6 +499,10 @@ public class BoardController : MonoBehaviour
 
         return matchedPieces;
     }
+
+
+    //check match in two direction: vertical and horizontal
+
 
     // Simulate upwards and rightwards swaps start from (x,y), if it will result in a match return all pieces of the first potential match
     List<GameObject> CheckPotentialMatch(int x, int y)
