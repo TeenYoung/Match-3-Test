@@ -29,6 +29,7 @@ public class BoardController : MonoBehaviour
     public AudioClip clearPieces;
 
     public Player player;
+    public Monster monster;
 
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
     public GameObject blackSumBoard, blueSumBoard, greenSumBoard, purpleSumBoard, redSumBoard;   //count of different color pieces, 
@@ -260,26 +261,31 @@ public class BoardController : MonoBehaviour
             matchedPieces.Clear();
             matchedPieces.AddRange(CheckAllMatches());
 
-            //when no match, player active in certain order
+            //when no match, player act in certain order
             if (matchedPieces.Count == 0)
             {
                 //if attack pieces(green & red) matched , player attack
                 if(greenSum != 0 || redSum != 0)
                 {
-                    Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
+                    //Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
                     player.Attack(greenSum, redSum);
+
+                    // Add conditon here if(attack works)
+                    player.HPChange();
                 }
 
                 //if move pieces ( blue & black) matched , player move
                 if (blueSum != 0 || blackSum != 0)
                 {
-                    Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
+                    //Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
+                    player.Move(blueSum, blackSum);
                 }
 
                 //if special pieces ( purple ) matched , player active special
                 if (purpleSum != 0)
                 {
-                    Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
+                    //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
+                    player.Special(purpleSum);
                 }
 
                 //reset martched pieces sum when no match
@@ -288,6 +294,11 @@ public class BoardController : MonoBehaviour
                 greenSum = 0;
                 purpleSum = 0;
                 redSum = 0;
+
+                //monster act after player's activity
+                monster.Move();
+                monster.Attack();                
+                monster.HPChange();
             }
         };
 

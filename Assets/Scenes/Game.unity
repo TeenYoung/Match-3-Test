@@ -1732,6 +1732,7 @@ MonoBehaviour:
   boardState: 0
   clearPieces: {fileID: 8300000, guid: 3613c559789fe1442b04c81188cd1222, type: 3}
   player: {fileID: 1305262731155286840}
+  monster: {fileID: 4489710276620360283}
   blackSumBoard: {fileID: 0}
   blueSumBoard: {fileID: 0}
   greenSumBoard: {fileID: 0}
@@ -2439,6 +2440,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8947042360835667634, guid: c82cdfa72ee43a84b9732c1f28ed38a9,
+        type: 3}
+      propertyPath: m_Value
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82cdfa72ee43a84b9732c1f28ed38a9, type: 3}
 --- !u!1 &1305262731155286839 stripped
@@ -2546,3 +2552,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff4ff9dacf130c489ddfa2f24c32ae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  distanceToPlayer: 0

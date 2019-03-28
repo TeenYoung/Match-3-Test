@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //public GameObject player;
+    //public GameObject hpSlider;
+    int hpValue;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        hpValue = 100;        
     }
 
     // Update is called once per frame
@@ -16,7 +20,7 @@ public class Player : MonoBehaviour
         
     }
 
-    //public GameObject player;
+    
 
     //call this function when player attack
     /// <summary>
@@ -26,7 +30,7 @@ public class Player : MonoBehaviour
     /// <param name="red"></param>
     public void Attack(int greenSum, int redSum)
     {
-        Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
+        Debug.Log(string.Format("Player attack. Green is {0}, red is {1}.", greenSum, redSum));
     }
 
     //call this function when player move
@@ -37,6 +41,22 @@ public class Player : MonoBehaviour
     /// <param name="blackSum"></param>
     public void Move(int blueSum, int blackSum)
     {
-        Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", blueSum, blackSum));
+        Debug.Log(string.Format("Player move. Blue is {0}, black is {1}.", blueSum, blackSum));
+    }
+
+    //call this function when player use special
+    /// <summary>
+    /// Use special when purple pieces matched and cleared
+    /// </summary>
+    /// <param name="purpleSum"></param>
+    public void Special(int purpleSum)
+    {
+        Debug.Log(string.Format("Player special. Purple is {0}.", purpleSum));
+    }
+
+    //change player's hp  
+    public void HPChange()
+    {
+        Debug.Log("Player's hp changed. Now is " + hpValue);
     }
 }
