@@ -264,16 +264,6 @@ public class BoardController : MonoBehaviour
             //when no match, player act in certain order
             if (matchedPieces.Count == 0)
             {
-                //if attack pieces(green & red) matched , player attack
-                if(greenSum != 0 || redSum != 0)
-                {
-                    //Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
-                    player.Attack(greenSum, redSum);
-
-                    // Add conditon here if(attack works)
-                    player.HPChange();
-                }
-
                 //if move pieces ( blue & black) matched , player move
                 if (blueSum != 0 || blackSum != 0)
                 {
@@ -287,6 +277,16 @@ public class BoardController : MonoBehaviour
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
                     player.Special(purpleSum);
                 }
+
+                //if attack pieces(green & red) matched , player attack
+                if (greenSum != 0 || redSum != 0)
+                {
+                    //Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
+                    player.Attack(greenSum, redSum);
+
+                    // Add conditon here if(attack works)
+                    player.HPChange();
+                }                               
 
                 //reset martched pieces sum when no match
                 blackSum = 0;
