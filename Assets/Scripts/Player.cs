@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
         
     }
 
-    public GameObject player;
+    //public GameObject player;
 
     //call this function when player attack
     /// <summary>

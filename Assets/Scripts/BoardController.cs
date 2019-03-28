@@ -28,7 +28,7 @@ public class BoardController : MonoBehaviour
     public State boardState = State.initializing;
     public AudioClip clearPieces;
 
-    //public GameObject player;
+    public Player player;
 
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
     public GameObject blackSumBoard, blueSumBoard, greenSumBoard, purpleSumBoard, redSumBoard;   //count of different color pieces, 
@@ -267,7 +267,7 @@ public class BoardController : MonoBehaviour
                 if(greenSum != 0 || redSum != 0)
                 {
                     Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
-                    //player.GetComponent<Player>().Attack(greenSum, redSum);
+                    player.Attack(greenSum, redSum);
                 }
 
                 //if move pieces ( blue & black) matched , player move
