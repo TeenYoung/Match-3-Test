@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        hpValue = 100;        
+        hpValue = 100;
     }
 
     // Update is called once per frame
@@ -54,9 +54,16 @@ public class Player : MonoBehaviour
         Debug.Log(string.Format("Player special. Purple is {0}.", purpleSum));
     }
 
-    //change player's hp  
-    public void HPChange()
+    //cal this when player HP change ( HP increase / decrease)
+    public void TakeDMG(int dmg)
     {
-        Debug.Log("Player's hp changed. Now is " + hpValue);
+        Debug.Log("Player take " + dmg + " damage.");
+        UpdateHPBar();
+    }
+
+    //update player's HP bar 
+    public void UpdateHPBar()
+    {
+        Debug.Log("Player's HPbar changed. Now is " + hpValue);
     }
 }

@@ -264,19 +264,20 @@ public class BoardController : MonoBehaviour
             //when no match, player act in certain order
             if (matchedPieces.Count == 0)
             {
-                //if move pieces ( blue & black) matched , player move
-                if (blueSum != 0 || blackSum != 0)
-                {
-                    //Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
-                    player.Move(blueSum, blackSum);
-                }
-
                 //if special pieces ( purple ) matched , player active special
                 if (purpleSum != 0)
                 {
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
                     player.Special(purpleSum);
                 }
+
+                //if move pieces ( blue & black) matched , player move
+                if (blueSum != 0 || blackSum != 0)
+                {
+                    //Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
+                    player.Move(blueSum, blackSum);
+                }
+                
 
                 //if attack pieces(green & red) matched , player attack
                 if (greenSum != 0 || redSum != 0)
@@ -285,7 +286,7 @@ public class BoardController : MonoBehaviour
                     player.Attack(greenSum, redSum);
 
                     // Add conditon here if(attack works)
-                    player.HPChange();
+                    monster.TakeDMG(greenSum);
                 }                               
 
                 //reset martched pieces sum when no match
@@ -295,10 +296,10 @@ public class BoardController : MonoBehaviour
                 purpleSum = 0;
                 redSum = 0;
 
-                //monster act after player's activity
+                //monster act after player's action
                 monster.Move();
                 monster.Attack();                
-                monster.HPChange();
+                player.TakeDMG(purpleSum);
             }
         };
 

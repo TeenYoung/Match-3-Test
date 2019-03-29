@@ -5,13 +5,11 @@ using UnityEngine;
 public class Monster : MonoBehaviour
 {
     int hpValue;
-    public int distanceToPlayer;
 
     // Start is called before the first frame update
     void Start()
     {
         hpValue = 100;
-        distanceToPlayer = 10;
     }
 
     // Update is called once per frame
@@ -32,9 +30,16 @@ public class Monster : MonoBehaviour
         Debug.Log("Monster move! HAHAHAHA~~");
     }
 
-    //monster hp change
-    public void HPChange()
+    //call this when monster's HP change ( HP increase / decrease)
+    public void TakeDMG(int dmg)
     {
-        Debug.Log("Monster HP change! I have " + hpValue + " HP. HAHAHAHA~~");
+        Debug.Log("Monster take " + dmg + " damage.");
+        UpdateHPBar();
+    }
+
+    //update monster's HP bar
+    public void UpdateHPBar()
+    {
+        Debug.Log("Monster HP bar change! I have " + hpValue + " HP. HAHAHAHA~~");
     }
 }
