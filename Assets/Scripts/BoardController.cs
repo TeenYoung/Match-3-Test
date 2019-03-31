@@ -32,10 +32,11 @@ public class BoardController : MonoBehaviour
     public Monster monster;
 
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
-    public GameObject blackSumBoard, blueSumBoard, greenSumBoard, purpleSumBoard, redSumBoard;   //count of different color pieces, 
-
+    public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;   //count of different color pieces
     
-    int blackSum = 0, blueSum = 0, greenSum = 0, purpleSum = 0, redSum = 0; // To calculate how many pieces was cleared in certain color
+    
+    int blackSum = 0, blueSum = 0, greenSum = 0, purpleSum = 0, redSum = 0;     // To calculate how many pieces was cleared in certain color
+    int purpleMax = 15;     // The num of purple pieces to trigger special 
 
     private int tileClearCount;
 
@@ -56,6 +57,7 @@ public class BoardController : MonoBehaviour
     {
         SetupBoard();
         StartShifting();
+        SetScoreBoard();
     }
 
     // Clear the board then start again
@@ -197,13 +199,16 @@ public class BoardController : MonoBehaviour
                         case "Color_Green":
                             greenSum ++;
                             break;
-                        case "Color_Purple":
-                            purpleSum ++;
+                        case "Color_Purple": //add purpleSum when pieces less than purple max
+                            if (purpleSum <= purpleMax) { purpleSum++; }
+                            else { purpleSum = purpleMax; }                            
                             break;
                         case "Color_Red":
                             redSum ++;
-                            break;
-                    }                    
+                            break;                            
+                    }
+
+                    SetScoreBoard();
 
                     int x = piece.GetComponent<PieceController>().myPosition.x;
                     int y = piece.GetComponent<PieceController>().myPosition.y;
@@ -211,7 +216,7 @@ public class BoardController : MonoBehaviour
                     Destroy(piece);
                 }
             }
-            
+            SetScoreBoard();
 
             ///show sum at certain color board ******************************unfinished, edited here when unity ready******************************
             Debug.Log(string.Format( "black =  {0} , blue =  {1}， green = {2}, purple = {3}, red = {4}" , blackSum ,blueSum ,greenSum , purpleSum , redSum));            
@@ -265,7 +270,7 @@ public class BoardController : MonoBehaviour
             if (matchedPieces.Count == 0)
             {
                 //if special pieces ( purple ) matched , player active special
-                if (purpleSum != 0)
+                if (purpleSum == purpleMax)
                 {
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
                     player.Special(purpleSum);
@@ -292,9 +297,9 @@ public class BoardController : MonoBehaviour
                 //reset martched pieces sum when no match
                 blackSum = 0;
                 blueSum = 0;
-                greenSum = 0;
-                purpleSum = 0;
+                greenSum = 0;                
                 redSum = 0;
+                if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
 
                 //monster act after player's action
                 monster.Move();
@@ -513,8 +518,6 @@ public class BoardController : MonoBehaviour
     }
 
 
-    //check match in two direction: vertical and horizontal
-
 
     // Simulate upwards and rightwards swaps start from (x,y), if it will result in a match return all pieces of the first potential match
     List<GameObject> CheckPotentialMatch(int x, int y)
@@ -659,4 +662,19 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    public void SetScoreBoard()
+    {
+        blackScoreText.text = blackSum.ToString();
+        blueScoreText.text = blueSum.ToString();
+        greenScoreText.text = greenSum.ToString();
+        redScoreText.text = redSum.ToString();
+        purpleScoreText.text = purpleSum.ToString();
+    }
+
+
+    public void UpdateScoreBoard()
+    {
+
+    }
 }
+

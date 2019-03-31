@@ -19,7 +19,6 @@ public class Player : MonoBehaviour
     {
         
     }
-
     
 
     //call this function when player attack

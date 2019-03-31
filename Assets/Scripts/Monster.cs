@@ -34,6 +34,7 @@ public class Monster : MonoBehaviour
     public void TakeDMG(int dmg)
     {
         Debug.Log("Monster take " + dmg + " damage.");
+        hpValue -= dmg;
         UpdateHPBar();
     }
 

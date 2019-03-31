@@ -2575,7 +2575,7 @@ MonoBehaviour:
   clearDelay: 0.4
   collapseDelay: 0.2
   refillDelay: 0.1
-  resortDelay: 0.1
+  resortDelay: 2
   acceptInputDelay: 0.05
   findHintDelay: 0.4
   showHintDelay: 2
@@ -2584,11 +2584,11 @@ MonoBehaviour:
   clearPieces: {fileID: 8300000, guid: 3613c559789fe1442b04c81188cd1222, type: 3}
   player: {fileID: 1305262731155286840}
   monster: {fileID: 4489710276620360283}
-  blackSumBoard: {fileID: 0}
-  blueSumBoard: {fileID: 0}
-  greenSumBoard: {fileID: 0}
-  purpleSumBoard: {fileID: 0}
-  redSumBoard: {fileID: 0}
+  blackScoreText: {fileID: 1826481921}
+  blueScoreText: {fileID: 93938516}
+  greenScoreText: {fileID: 989559055}
+  purpleScoreText: {fileID: 833391683}
+  redScoreText: {fileID: 92827672}
 --- !u!4 &1689537494
 Transform:
   m_ObjectHideFlags: 0
