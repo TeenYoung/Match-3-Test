@@ -40,7 +40,7 @@ public class BoardController : MonoBehaviour
     public static float distance; //distance between monster and player    
    
     
-    int blackSum = 0, blueSum = 0, greenSum = 0, purpleSum = 0, redSum = 0;     // To calculate how many pieces was cleared in certain color
+    int blackSum, blueSum, greenSum, purpleSum, redSum ;     // To calculate how many pieces was cleared in certain color
     int purpleMax = 15;     // The num of purple pieces to trigger special 
 
     private int tileClearCount;
@@ -60,16 +60,10 @@ public class BoardController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        InitializeCreature(100f,200f,5);
         SetupBoard();
         StartShifting();
-        SetScoreBoard();
-
-        //initialize creature and distance
-        player = Instantiate(playerPrefab, new Vector3(0.5f,8.8f,90f), Quaternion.identity).GetComponent<Player>();
-        player.InitializeHPSlider(100f);
-        monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
-        monster.InitializeHPSlider(200f);
-        distance = 5f;
+        InitializeScoreBoard();
     }
 
     // Clear the board then start again
@@ -79,8 +73,12 @@ public class BoardController : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        Destroy(player.gameObject);
+        Destroy(monster.gameObject);
+        InitializeCreature(100f, 200f, 5);
         SetupBoard();
         StartShifting();
+        InitializeScoreBoard();
     }
 
     // Create a board (without any initial match)
@@ -220,7 +218,7 @@ public class BoardController : MonoBehaviour
                             break;                            
                     }
 
-                    SetScoreBoard();
+                    UpdateScoreBoard();
 
                     int x = piece.GetComponent<PieceController>().myPosition.x;
                     int y = piece.GetComponent<PieceController>().myPosition.y;
@@ -228,7 +226,7 @@ public class BoardController : MonoBehaviour
                     Destroy(piece);
                 }
             }
-            SetScoreBoard();
+            UpdateScoreBoard();
 
             ///show sum at certain color board ******************************unfinished, edited here when unity ready******************************
             Debug.Log(string.Format( "black =  {0} , blue =  {1}， green = {2}, purple = {3}, red = {4}" , blackSum ,blueSum ,greenSum , purpleSum , redSum));            
@@ -314,31 +312,54 @@ public class BoardController : MonoBehaviour
                 monster.Attack(10f);
             }
         };
+        //Debug.Log("Player's current HP is" + monster.CurrentHP);
 
-        if (tileClearCount < tileClearGoal)
+        //player lose when HP not more than 0 or move count come to end but monster still alive
+        if ((moveCount >= moveLimit && monster.CurrentHP > 0) || player.CurrentHP <= 0)
         {
-            if (moveCount < moveLimit)
-            {
-                // Start to accept user inputs again after a small delay
-                yield return new WaitForSeconds(acceptInputDelay);
-                boardState = State.stable;
-
-                // Check for hints and suffle the board if nothing found
-                StartCoroutine(ShowHintCoroutine());
-            }
-            else
-            {
-                levelEndText.text = "FAILED";
-                levelEndPanel.SetActive(true);
-            }
-
+            levelEndText.text = "FAILED";
+            levelEndPanel.SetActive(true);
         }
-        else
+        //player win when monster HP not more than 0
+        else if (monster.CurrentHP <= 0)
         {
             levelEndText.text = "COMPLETED";
             levelEndPanel.SetActive(true);
-
         }
+        else
+        {
+            //    Start to accept user inputs again after a small delay
+            yield return new WaitForSeconds(acceptInputDelay);
+            boardState = State.stable;
+
+            //    Check for hints and suffle the board if nothing found
+            StartCoroutine(ShowHintCoroutine());
+        }
+
+        //if (tileClearCount < tileClearGoal)
+        //{
+        //    if (moveCount < moveLimit)
+        //    {
+        //        // Start to accept user inputs again after a small delay
+        //        yield return new WaitForSeconds(acceptInputDelay);
+        //        boardState = State.stable;
+
+        //        // Check for hints and suffle the board if nothing found
+        //        StartCoroutine(ShowHintCoroutine());
+        //    }
+        //    else
+        //    {
+        //        levelEndText.text = "FAILED";
+        //        levelEndPanel.SetActive(true);
+        //    }
+
+        //}
+        //else
+        //{
+        //    levelEndText.text = "COMPLETED";
+        //    levelEndPanel.SetActive(true);
+
+        //}
     }
 
     // Create an alterative 2D array with certain two pieces swaped
@@ -669,19 +690,41 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    public void SetScoreBoard()
+    //initialize score board to 0
+    public void InitializeScoreBoard()
+    {
+        blackSum = 0;
+        blueSum = 0;
+        greenSum = 0;
+        redSum = 0;
+        purpleSum = 0;
+        UpdateScoreBoard();
+    }
+
+    //update score board
+    public void UpdateScoreBoard()
     {
         blackScoreText.text = blackSum.ToString();
         blueScoreText.text = blueSum.ToString();
         greenScoreText.text = greenSum.ToString();
         redScoreText.text = redSum.ToString();
         purpleScoreText.text = purpleSum.ToString();
-    }
+    }    
 
-
-    public void UpdateScoreBoard()
+    /// <summary>
+    /// Initialize monster and player
+    /// </summary>
+    /// <param name="playerMaxHP">player's initial HP</param>
+    /// <param name="monsterMaxHp">monster's initial HP</param> 
+    /// <param name="initialDistance">initial distance</param>
+    public void InitializeCreature(float playerMaxHP, float monsterMaxHp, float initialDistance)
     {
-
+        //initialize creature and distance
+        player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();
+        player.InitializeHPSlider(100f);
+        monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
+        monster.InitializeHPSlider(200f);
+        distance = initialDistance;
     }
 }
 
