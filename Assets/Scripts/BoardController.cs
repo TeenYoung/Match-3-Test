@@ -28,12 +28,17 @@ public class BoardController : MonoBehaviour
     public State boardState = State.initializing;
     public AudioClip clearPieces;
 
-    public Player player;
-    public Monster monster;
+    public GameObject playerPrefab, monsterPrefab;
+
+    private Player player;
+    private Monster monster;
+    
 
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
     public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;   //count of different color pieces
-    
+
+    public static float distance; //distance between monster and player    
+   
     
     int blackSum = 0, blueSum = 0, greenSum = 0, purpleSum = 0, redSum = 0;     // To calculate how many pieces was cleared in certain color
     int purpleMax = 15;     // The num of purple pieces to trigger special 
@@ -58,6 +63,13 @@ public class BoardController : MonoBehaviour
         SetupBoard();
         StartShifting();
         SetScoreBoard();
+
+        //initialize creature and distance
+        player = Instantiate(playerPrefab, new Vector3(0.5f,8.8f,90f), Quaternion.identity).GetComponent<Player>();
+        player.InitializeHPSlider(100f);
+        monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
+        monster.InitializeHPSlider(200f);
+        distance = 5f;
     }
 
     // Clear the board then start again
@@ -273,14 +285,15 @@ public class BoardController : MonoBehaviour
                 if (purpleSum == purpleMax)
                 {
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
-                    player.Special(purpleSum);
+                    player.UseItem(purpleSum);
                 }
 
                 //if move pieces ( blue & black) matched , player move
                 if (blueSum != 0 || blackSum != 0)
                 {
                     //Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
-                    player.Move(blueSum, blackSum);
+                    player.Move(blueSum);
+                    player.Move(blackSum);
                 }
                 
 
@@ -290,8 +303,9 @@ public class BoardController : MonoBehaviour
                     //Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
                     player.Attack(greenSum, redSum);
 
-                    // Add conditon here if(attack works)
-                    monster.TakeDMG(greenSum);
+                    // monster take damage
+                    monster.TakeDMG(greenSum * 10);
+                    monster.TakeDMG(redSum * 10);
                 }                               
 
                 //reset martched pieces sum when no match
@@ -301,10 +315,10 @@ public class BoardController : MonoBehaviour
                 redSum = 0;
                 if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
 
-                //monster act after player's action
-                monster.Move();
-                monster.Attack();                
-                player.TakeDMG(purpleSum);
+                ////monster act after player's action
+                //monster.Move();
+                //monster.Attack();                
+                //player.TakeDMG(purpleSum);
             }
         };
 

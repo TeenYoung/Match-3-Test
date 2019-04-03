@@ -93,6 +93,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88bd9cb077239c4582200f07ea0bbb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpSlider: {fileID: 8947042360835667634}
+  fillImage: {fileID: 4818672392726973864}
+  fullHpColor: {r: 0.21929511, g: 0.6037736, b: 0.21929511, a: 0.7058824}
+  zeroHpColor: {r: 0.8396226, g: 0.21529226, b: 0.08317016, a: 0.7058824}
 --- !u!1 &710485502378857842
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,7 +255,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4378563997639671722}
   - component: {fileID: 8947042360835667634}
-  - component: {fileID: 6777745974480779409}
   m_Layer: 5
   m_Name: HPSlider
   m_TagString: Untagged
@@ -329,22 +332,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &6777745974480779409
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6777745974480779408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 240752710ddca7e49b7d06c8ed790669, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hpSlider: {fileID: 8947042360835667634}
-  fillImage: {fileID: 4818672392726973864}
-  fullHpColor: {r: 0.3758186, g: 0.9339623, b: 0.2775454, a: 0.5882353}
-  zeroHpColor: {r: 0.9528302, g: 0.33708617, b: 0.33708617, a: 0.5882353}
 --- !u!1 &8286893919469552820
 GameObject:
   m_ObjectHideFlags: 0
