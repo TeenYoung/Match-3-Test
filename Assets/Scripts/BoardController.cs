@@ -30,8 +30,8 @@ public class BoardController : MonoBehaviour
 
     public GameObject playerPrefab, monsterPrefab;
 
-    private Player player;
-    private Monster monster;
+    public Player player;
+    public Monster monster;
     
 
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
@@ -291,7 +291,6 @@ public class BoardController : MonoBehaviour
                 //if move pieces ( blue & black) matched , player move
                 if (blueSum != 0 || blackSum != 0)
                 {
-                    //Debug.Log(string.Format("Player move. Blue is {0}, black is {1}", blueSum, blackSum));
                     player.Move(blueSum);
                     player.Move(blackSum);
                 }
@@ -300,12 +299,7 @@ public class BoardController : MonoBehaviour
                 //if attack pieces(green & red) matched , player attack
                 if (greenSum != 0 || redSum != 0)
                 {
-                    //Debug.Log(string.Format("Player attack. Green is {0}, red is {1}", greenSum, redSum));
                     player.Attack(greenSum, redSum);
-
-                    // monster take damage
-                    monster.TakeDMG(greenSum * 10);
-                    monster.TakeDMG(redSum * 10);
                 }                               
 
                 //reset martched pieces sum when no match
@@ -315,10 +309,9 @@ public class BoardController : MonoBehaviour
                 redSum = 0;
                 if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
 
-                ////monster act after player's action
-                //monster.Move();
-                //monster.Attack();                
-                //player.TakeDMG(purpleSum);
+                //monster act after player's action
+                monster.Move(5f);
+                monster.Attack(10f);
             }
         };
 

@@ -96,7 +96,7 @@ MonoBehaviour:
   hpSlider: {fileID: 8947042360835667634}
   fillImage: {fileID: 4818672392726973864}
   fullHpColor: {r: 0.21929511, g: 0.6037736, b: 0.21929511, a: 0.7058824}
-  zeroHpColor: {r: 0.8396226, g: 0.21529226, b: 0.08317016, a: 0.7058824}
+  zeroHpColor: {r: 1, g: 0, b: 0, a: 0.7058824}
 --- !u!1 &710485502378857842
 GameObject:
   m_ObjectHideFlags: 0

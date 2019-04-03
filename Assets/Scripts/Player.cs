@@ -79,7 +79,17 @@ public class Player : Creature
     //**************change input variable according to the way of attack***************
     public void Attack(int greenSum, int redSum)
     {
-        Debug.Log(string.Format("Player attack. Green is {0}, red is {1}.", greenSum, redSum));
+        //green attack
+        if (greenSum != 0) {
+            BoardController.board.monster.TakeDMG(greenSum * 5);
+            Debug.Log("Player attack. Green is "+ greenSum);
+        }
+
+        //red attack
+        if (redSum != 0) {
+            BoardController.board.monster.TakeDMG(redSum * 5);
+            Debug.Log("Player attack. Red is " + redSum);
+        }        
     }
 
     //player use items

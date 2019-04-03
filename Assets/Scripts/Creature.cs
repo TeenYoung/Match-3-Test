@@ -15,7 +15,7 @@ public class Creature : MonoBehaviour {
 
     public float MaxHP { get; set; }
 
-    public void Move(int feet)
+    public void Move(float feet)
     {
         BoardController.distance += feet;
         Debug.Log("Distance is " + BoardController.distance);

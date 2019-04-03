@@ -54,9 +54,10 @@ public class Monster : Creature
     //    this.currentHP = initialHP;
     //}
 
-    public void Attack()
+    public void Attack(float dmg)
     {
-        //Debug.Log("Monster attack! HAHAHAHAHA~~");
+        Debug.Log("Monster attack! HAHAHAHAHA~~");
+        BoardController.board.player.TakeDMG(dmg);
     }
 
 }
