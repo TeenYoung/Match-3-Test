@@ -683,7 +683,10 @@ public class BoardController : MonoBehaviour
                 
                 for (int i = 0; i < firstPotentialMatch.Count; i++)
                 {
-                    firstPotentialMatch[i].GetComponent<Animator>().SetBool("isHint", true);
+                    if (firstPotentialMatch[i] != null)
+                    {
+                        firstPotentialMatch[i].GetComponent<Animator>().SetBool("isHint", true);
+                    }
                 }
 
             }
