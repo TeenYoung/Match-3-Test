@@ -18,7 +18,7 @@ public class Creature : MonoBehaviour {
     public void Move(float feet)
     {
         BoardController.distance += feet;
-        Debug.Log("Distance is " + BoardController.distance);
+        //Debug.Log("Distance is " + BoardController.distance);
     }
 
     public void TakeDMG(float dmg)
@@ -41,6 +41,8 @@ public class Creature : MonoBehaviour {
         hpSlider.value = this.CurrentHP;       
         fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / MaxHP);
     }
+
+    
 }
 
 
