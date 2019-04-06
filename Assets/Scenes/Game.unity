@@ -2745,6 +2745,8 @@ MonoBehaviour:
   greenScoreText: {fileID: 989559055}
   purpleScoreText: {fileID: 833391683}
   redScoreText: {fileID: 92827672}
+  distanceBoardText: {fileID: 1250159913}
+  initialDistance: 0
 --- !u!4 &1689537494
 Transform:
   m_ObjectHideFlags: 0

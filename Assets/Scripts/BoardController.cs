@@ -37,6 +37,8 @@ public class BoardController : MonoBehaviour
     ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
     public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;   //count of different color pieces
 
+    public Text distanceBoardText;
+    public float initialDistance;
     public static float distance; //distance between monster and player    
    
     
@@ -60,10 +62,11 @@ public class BoardController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitializeCreature(100f,200f,5);
+        InitializeCreature(100f,200f,5f);
+        Debug.Log("distance is " + distance);
         SetupBoard();
         StartShifting();
-        InitializeScoreBoard();
+        InitializeBoards();
     }
 
     // Clear the board then start again
@@ -75,10 +78,10 @@ public class BoardController : MonoBehaviour
         }
         Destroy(player.gameObject);
         Destroy(monster.gameObject);
-        InitializeCreature(100f, 200f, 5);
+        InitializeCreature(100f, 200f, 5f);
         SetupBoard();
         StartShifting();
-        InitializeScoreBoard();
+        InitializeBoards();
     }
 
     // Create a board (without any initial match)
@@ -290,7 +293,9 @@ public class BoardController : MonoBehaviour
                 if (blueSum != 0 || blackSum != 0)
                 {
                     player.Move(blueSum);
+                    UpdateDistanceBoard();
                     player.Move(blackSum);
+                    UpdateDistanceBoard();
                 }
                 
 
@@ -308,8 +313,22 @@ public class BoardController : MonoBehaviour
                 if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
 
                 //monster act after player's action
-                monster.Move(5f);
-                monster.Attack(10f);
+                //monster attack if player in attack range
+                if( distance < Mathf.Max( monster.PowerAttackRange,monster.NormalAttackRange))
+                {
+                    if (distance > monster.PowerAttackRange)
+                    {
+                        monster.NormalAttack();
+                    }
+                    else monster.PowerAttack();
+                }
+                // monster move if player out of attack range
+                else
+                {
+                    Debug.Log("Monster move, player out of attack range.");
+                    monster.Move(-5f);
+                    UpdateDistanceBoard();
+                }                    
             }
         };
         //Debug.Log("Player's current HP is" + monster.CurrentHP);
@@ -694,7 +713,7 @@ public class BoardController : MonoBehaviour
     }
 
     //initialize score board to 0
-    public void InitializeScoreBoard()
+    public void InitializeBoards()
     {
         blackSum = 0;
         blueSum = 0;
@@ -702,6 +721,10 @@ public class BoardController : MonoBehaviour
         redSum = 0;
         purpleSum = 0;
         UpdateScoreBoard();
+
+        distance = initialDistance;
+        UpdateDistanceBoard();
+        
     }
 
     //update score board
@@ -713,6 +736,11 @@ public class BoardController : MonoBehaviour
         redScoreText.text = redSum.ToString();
         purpleScoreText.text = purpleSum.ToString();
     }    
+
+    public void UpdateDistanceBoard()
+    {
+        distanceBoardText.text = distance.ToString();
+    }
 
     /// <summary>
     /// Initialize monster and player
@@ -727,7 +755,8 @@ public class BoardController : MonoBehaviour
         player.InitializeHPSlider(100f);
         monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
         monster.InitializeHPSlider(200f);
-        distance = initialDistance;
+        monster.InitializeAttackInfo(10f,5f,5f,20f);
+        this.initialDistance = initialDistance;
     }
 }
 
