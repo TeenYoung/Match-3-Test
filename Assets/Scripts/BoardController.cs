@@ -15,7 +15,7 @@ public enum State
 
 public class BoardController : MonoBehaviour
 {
-
+  //match board info
     public int boardWidth, boardHeight;
     public int moveLimit, moveCount, tileClearGoal;
     public Text moveCountText, scoreText, levelEndText;
@@ -26,24 +26,24 @@ public class BoardController : MonoBehaviour
         acceptInputDelay, findHintDelay, showHintDelay, shuffleDelay;
     public static BoardController board = null;
     public State boardState = State.initializing;
-    public AudioClip clearPieces;
-
-    public GameObject playerPrefab, monsterPrefab;
-
-    public Player player;
-    public Monster monster;
+    public AudioClip clearPieces;         
     
-
-    ///Connect gameobject here when unity elements established ****************************** redit here when unity ready******************************
     public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;   //count of different color pieces
 
+  //battle creature info
+    //creatures
+    public GameObject playerPrefab, monsterPrefab, buffPrefab;
+    public Player player;
+    public Monster monster;
+
+    //distance
     public Text distanceBoardText;
     public float initialDistance;
     public static float distance; //distance between monster and player    
    
     
     int blackSum, blueSum, greenSum, purpleSum, redSum ;     // To calculate how many pieces was cleared in certain color
-    int purpleMax = 15;     // The num of purple pieces to trigger special 
+    int purpleMax = 3;     // The num of purple pieces to trigger special 
 
     private int tileClearCount;
 
@@ -63,7 +63,6 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         InitializeCreature(100f,200f,5f);
-        Debug.Log("distance is " + distance);
         SetupBoard();
         StartShifting();
         InitializeBoards();
@@ -287,6 +286,8 @@ public class BoardController : MonoBehaviour
                 {
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
                     player.UseItem(purpleSum);
+                    GameObject buff = Instantiate(buffPrefab, monster.transform.position, Quaternion.identity);
+                    monster.AddBuff(buff);
                 }
 
                 //if move pieces ( blue & black) matched , player move
@@ -758,5 +759,6 @@ public class BoardController : MonoBehaviour
         monster.InitializeAttackInfo(10f,5f,5f,20f);
         this.initialDistance = initialDistance;
     }
+    
 }
 

@@ -9,6 +9,8 @@ public class Creature : MonoBehaviour {
     public Image fillImage;
     public Color fullHpColor, zeroHpColor;
 
+    public GameObject buffZone;
+
     public string CreatureName { get; set; }
 
     public float CurrentHP { get; set; }
@@ -42,41 +44,9 @@ public class Creature : MonoBehaviour {
         fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / MaxHP);
     }
 
-    
+    public void AddBuff(GameObject buffObj)
+    {
+        buffObj.gameObject.transform.SetParent(buffZone.transform);
+    }
+
 }
-
-
-//public class Player : Creature {
-
-//    public Player(string playerName, float initialHP) : base (playerName, initialHP)
-//    {
-//        this.creatureName = playerName;
-//        this.currentHP = initialHP;
-//    }
-
-//    public void Attack(int greenSum, int redSum)
-//    {
-//        Debug.Log(string.Format("Player attack. Green is {0}, red is {1}.", greenSum, redSum));
-//    }
-
-//    public void UseItem(int purpleSum)
-//    {
-//        Debug.Log(string.Format("Player special. Purple is {0}.", purpleSum));
-//    }
-    
-//}
-
-//public class Monster : Creature {
-
-//    public Monster(string monsterName, float initialHP) : base (monsterName, initialHP)
-//    {
-//        this.creatureName = monsterName;
-//        this.currentHP = initialHP;
-//    }
-
-//    public void Attack()
-//    {
-//        Debug.Log("Monster attack! HAHAHAHAHA~~");
-//    }
-
-//}

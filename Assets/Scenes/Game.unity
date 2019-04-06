@@ -2748,17 +2748,19 @@ MonoBehaviour:
   shuffleDelay: 0.4
   boardState: 0
   clearPieces: {fileID: 8300000, guid: 3613c559789fe1442b04c81188cd1222, type: 3}
-  playerPrefab: {fileID: 193368995764267772, guid: c82cdfa72ee43a84b9732c1f28ed38a9,
-    type: 3}
-  monsterPrefab: {fileID: 1669387234111515459, guid: 0e67b42264d917546b416172ed2c2a31,
-    type: 3}
-  player: {fileID: 0}
-  monster: {fileID: 0}
   blackScoreText: {fileID: 1826481921}
   blueScoreText: {fileID: 93938516}
   greenScoreText: {fileID: 989559055}
   purpleScoreText: {fileID: 833391683}
   redScoreText: {fileID: 92827672}
+  playerPrefab: {fileID: 193368995764267772, guid: c82cdfa72ee43a84b9732c1f28ed38a9,
+    type: 3}
+  monsterPrefab: {fileID: 1669387234111515459, guid: 0e67b42264d917546b416172ed2c2a31,
+    type: 3}
+  buffPrefab: {fileID: 5830208788185106171, guid: a233c55508d303441974800662f9efe5,
+    type: 3}
+  player: {fileID: 0}
+  monster: {fileID: 0}
   distanceBoardText: {fileID: 1250159913}
   initialDistance: 0
 --- !u!4 &1689537494
