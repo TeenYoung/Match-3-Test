@@ -102,7 +102,10 @@ MonoBehaviour:
   fillImage: {fileID: 4818672392726973864}
   fullHpColor: {r: 0.21929511, g: 0.6037736, b: 0.21929511, a: 0.7058824}
   zeroHpColor: {r: 1, g: 0, b: 0, a: 0.7058824}
+  buffPrefab: {fileID: 5830208788185106171, guid: a233c55508d303441974800662f9efe5,
+    type: 3}
   buffZone: {fileID: 3184489492639037177}
+  buffList: []
 --- !u!1 &710485502378857842
 GameObject:
   m_ObjectHideFlags: 0

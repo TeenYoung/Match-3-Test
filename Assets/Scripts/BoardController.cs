@@ -32,7 +32,7 @@ public class BoardController : MonoBehaviour
 
   //battle creature info
     //creatures
-    public GameObject playerPrefab, monsterPrefab, buffPrefab;
+    public GameObject playerPrefab, monsterPrefab;
     public Player player;
     public Monster monster;
 
@@ -43,7 +43,7 @@ public class BoardController : MonoBehaviour
    
     
     int blackSum, blueSum, greenSum, purpleSum, redSum ;     // To calculate how many pieces was cleared in certain color
-    int purpleMax = 3;     // The num of purple pieces to trigger special 
+    int purpleMax = 6;     // The num of purple pieces to trigger special 
 
     private int tileClearCount;
 
@@ -285,9 +285,7 @@ public class BoardController : MonoBehaviour
                 if (purpleSum == purpleMax)
                 {
                     //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
-                    player.UseItem(purpleSum);
-                    GameObject buff = Instantiate(buffPrefab, monster.transform.position, Quaternion.identity);
-                    monster.AddBuff(buff);
+                    player.UseItem(purpleSum);                   
                 }
 
                 //if move pieces ( blue & black) matched , player move
@@ -304,6 +302,10 @@ public class BoardController : MonoBehaviour
                 if (greenSum != 0 || redSum != 0)
                 {
                     player.Attack(greenSum, redSum);
+                    if(greenSum !=0)
+                    monster.AddBuff("green", greenSum);
+                    if(redSum !=0)
+                    monster.AddBuff("red", redSum);
                 }                               
 
                 //reset martched pieces sum when no match
@@ -329,7 +331,8 @@ public class BoardController : MonoBehaviour
                     Debug.Log("Monster move, player out of attack range.");
                     monster.Move(-5f);
                     UpdateDistanceBoard();
-                }                    
+                }   
+                monster.BuffDecreaseOne();
             }
         };
         //Debug.Log("Player's current HP is" + monster.CurrentHP);

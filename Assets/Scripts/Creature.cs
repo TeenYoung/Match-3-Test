@@ -8,8 +8,9 @@ public class Creature : MonoBehaviour {
     public Slider hpSlider;
     public Image fillImage;
     public Color fullHpColor, zeroHpColor;
+    public GameObject buffPrefab, buffZone;
 
-    public GameObject buffZone;
+    public List<GameObject> buffList = new List<GameObject>();
 
     public string CreatureName { get; set; }
 
@@ -44,9 +45,42 @@ public class Creature : MonoBehaviour {
         fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / MaxHP);
     }
 
-    public void AddBuff(GameObject buffObj)
+    public void AddBuff(string buffTpye, int buffTurn)
     {
-        buffObj.gameObject.transform.SetParent(buffZone.transform);
+        GameObject buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
+        Buff buff = buffObj.GetComponent<Buff>();
+        if (buffTpye == "green") buffObj.GetComponent<Image>().color = new Color(0.458f,0.737f,0.439f);
+        if (buffTpye == "red") buffObj.GetComponent<Image>().color = new Color(0.925f,0.408f,0.471f);
+        buffObj.transform.SetParent(buffZone.transform);
+        buffList.Add(buffObj);
+        buff.InitializeBuff(buffTpye, buffTurn);
+    }
+
+
+    public void BuffDecreaseOne()
+    {
+        if (buffList != null)
+        {
+            for(int i = buffList.Count-1; i >=0; i--)
+            {
+                Buff buff = buffList[i].GetComponent<Buff>();
+                buff.remainTurn--;
+                if (buff.remainTurn < 0)
+                {
+                    Destroy(buffList[i]);
+                    buffList.Remove(buffList[i]);
+                }
+                else if(buff.remainTurn == 0)
+                {
+                    buffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                    buff.remainTurnsText.text = "";
+                }
+                else
+                {
+                    buff.UpdateBuff();
+                }
+            }                       
+        }        
     }
 
 }

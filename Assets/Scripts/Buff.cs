@@ -9,7 +9,7 @@ public class Buff : MonoBehaviour
     public Text remainTurnsText;
     //public List<Image> buffImageList;
 
-    public int remainTurn;
+    public int remainTurn { get; set; }
     
     //bufftype: Bleeding, Stunning, 
     public void InitializeBuff(string buffType, int remainTurn)
