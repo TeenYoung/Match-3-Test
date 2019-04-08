@@ -45,7 +45,7 @@ public class Weapon : MonoBehaviour
     ////monster take damage when player power attack, and multi damage
     private void SinglePowerAttack()
     {
-        BoardController.board.monster.TakeDMG(this.Damage * PowerAttackMultiply * powerAttackRate);
+        BoardController.board.monster.TakeDMG(this.Damage * PowerAttackMultiply * powerAttackProficiency);
     }
 
     //how many times normal attack will triggered
