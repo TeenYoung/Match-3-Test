@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4671053062217681153}
   - component: {fileID: 1456131548576358775}
   - component: {fileID: 951588091189569902}
+  - component: {fileID: 432296148774953472}
   m_Layer: 5
   m_Name: Buff
   m_TagString: Untagged
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7772285, g: 0.7830189, b: 0.31394625, a: 1}
+  m_Color: {r: 0.5372549, g: 0.6666667, b: 0.8588236, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -89,6 +90,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   remainTurnsText: {fileID: 7082277991094913060}
+--- !u!114 &432296148774953472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5830208788185106171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 0.1
+  m_MinHeight: 0.3
+  m_PreferredWidth: 0.3
+  m_PreferredHeight: 0.3
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &8265024568053970797
 GameObject:
   m_ObjectHideFlags: 0

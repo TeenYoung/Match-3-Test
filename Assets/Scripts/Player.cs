@@ -17,14 +17,17 @@ public class Player : Creature
     {
         //green attack
         if (greenSum != 0) {
-            BoardController.board.monster.TakeDMG(greenSum * 5);
-            Debug.Log("Player attack. Green is "+ greenSum);
+            BoardController.board.monster.TakeDMG(greenSum );
+            Debug.Log("Player normal attack. Green is "+ greenSum);
         }
 
-        //red attack
+        //red attack: 
         if (redSum != 0) {
-            BoardController.board.monster.TakeDMG(redSum * 5);
-            Debug.Log("Player attack. Red is " + redSum);
+            // power attack, add bleeding to monster
+            this.AddBuff("power", redSum);
+            BoardController.board.monster.AddBuff ("bleeding",redSum);
+            BoardController.board.monster.TakeDMG(redSum );
+            Debug.Log("Player power attack. Red is " + redSum);
         }        
     }
 
@@ -32,6 +35,6 @@ public class Player : Creature
     public void UseItem(int purpleSum)
     {
         Debug.Log(string.Format("Player special. Purple is {0}.", purpleSum));
-    }
+    }   
 
 }

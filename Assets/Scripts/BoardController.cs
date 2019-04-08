@@ -291,39 +291,48 @@ public class BoardController : MonoBehaviour
                 //if move pieces ( blue & black) matched , player move
                 if (blueSum != 0 || blackSum != 0)
                 {
-                    player.Move(blueSum);
-                    UpdateDistanceBoard();
                     player.Move(blackSum);
                     UpdateDistanceBoard();
-                }
-                
+                    // if bulesum >0, player add dodge buff 2 turns
+                    if (blueSum != 0)
+                    {
+                        if (distance < Mathf.Max(monster.PowerAttackRange, monster.NormalAttackRange))
+                        player.AddBuff("dodge", blueSum);
+                        else player.Move(blueSum);
+                    }
+                }                
 
                 //if attack pieces(green & red) matched , player attack
                 if (greenSum != 0 || redSum != 0)
                 {
-                    player.Attack(greenSum, redSum);
-                    if(greenSum !=0)
-                    monster.AddBuff("green", greenSum);
-                    if(redSum !=0)
-                    monster.AddBuff("red", redSum);
-                }                               
+                    player.Attack(greenSum, redSum);   
+                }
 
+
+             //player turn ends
                 //reset martched pieces sum when no match
                 blackSum = 0;
                 blueSum = 0;
-                greenSum = 0;                
+                greenSum = 0;
                 redSum = 0;
                 if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
+                player.BuffDecreaseOne();
 
-                //monster act after player's action
+
+             //monster turn begins, monster act after player's action
                 //monster attack if player in attack range
-                if( distance < Mathf.Max( monster.PowerAttackRange,monster.NormalAttackRange))
-                {
+                if ( distance < Mathf.Max(monster.PowerAttackRange,monster.NormalAttackRange))
+                {                    
+                    //monster attack miss if player has dodge buff
+                    //if(player.buffList.Exists(x => x.GetComponent<Buff>())
+                    //{
+                    //    Debug.Log("Monster attack miss.");
+                    //}
                     if (distance > monster.PowerAttackRange)
                     {
-                        monster.NormalAttack();
+                        monster.NormalAttack(player.IsDodge);
                     }
-                    else monster.PowerAttack();
+                    else monster.PowerAttack(player.IsDodge);
                 }
                 // monster move if player out of attack range
                 else
@@ -331,7 +340,8 @@ public class BoardController : MonoBehaviour
                     Debug.Log("Monster move, player out of attack range.");
                     monster.Move(-5f);
                     UpdateDistanceBoard();
-                }   
+                }  
+             //monster turn ends   
                 monster.BuffDecreaseOne();
             }
         };
@@ -357,32 +367,7 @@ public class BoardController : MonoBehaviour
 
             //    Check for hints and suffle the board if nothing found
             StartCoroutine(ShowHintCoroutine());
-        }
-
-        //if (tileClearCount < tileClearGoal)
-        //{
-        //    if (moveCount < moveLimit)
-        //    {
-        //        // Start to accept user inputs again after a small delay
-        //        yield return new WaitForSeconds(acceptInputDelay);
-        //        boardState = State.stable;
-
-        //        // Check for hints and suffle the board if nothing found
-        //        StartCoroutine(ShowHintCoroutine());
-        //    }
-        //    else
-        //    {
-        //        levelEndText.text = "FAILED";
-        //        levelEndPanel.SetActive(true);
-        //    }
-
-        //}
-        //else
-        //{
-        //    levelEndText.text = "COMPLETED";
-        //    levelEndPanel.SetActive(true);
-
-        //}
+        }        
     }
 
     // Create an alterative 2D array with certain two pieces swaped
@@ -759,7 +744,7 @@ public class BoardController : MonoBehaviour
         player.InitializeHPSlider(100f);
         monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
         monster.InitializeHPSlider(200f);
-        monster.InitializeAttackInfo(10f,5f,5f,20f);
+        monster.InitializeAttackInfo(10f,1f,5f,1f);
         this.initialDistance = initialDistance;
     }
     

@@ -10,18 +10,31 @@ public class Monster : Creature
     public float PowerAttackRange { get; set; }
 
    
-    public void NormalAttack()
+    public void NormalAttack(bool miss)
     {
-        Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
-        BoardController.board.player.TakeDMG(NormalAttackDMG);
+        if (miss)
+        {
+            Debug.Log(" Normal attack miss! ");
+        }
+        else
+        {
+            Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
+            BoardController.board.player.TakeDMG(NormalAttackDMG);
+        }
     }
 
-    public void PowerAttack()
+    public void PowerAttack(bool miss)
     {
-        Debug.Log("Monster power attack, making damage: " + PowerAttackDMG);
-        BoardController.board.player.TakeDMG(PowerAttackDMG);
+        if (miss)
+        {
+            Debug.Log(" Power attack miss! ");
+        }
+        else
+        {
+            Debug.Log("Monster power attack, making damage: " + PowerAttackDMG);
+            BoardController.board.player.TakeDMG(PowerAttackDMG);
+        }        
     }
-
     
 
     /// <summary>
