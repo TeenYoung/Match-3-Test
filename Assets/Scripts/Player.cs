@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player : Creature
 {
-
+    public Weapon weapon;
     //public Player(string playerName, float initialHP) : base(playerName, initialHP)
     //{
     //    this.CreatureName = playerName;
@@ -13,20 +13,34 @@ public class Player : Creature
     //}
 
     //**************change input variable according to the way of attack***************
+    public void Initialize(float playerMaxHP, string weaponType)//float dmg, float ran, float attRate)
+    {
+        this.InitializeHPSlider(playerMaxHP);
+        switch (weaponType)
+        {
+            case "longbow":
+                weapon.Initialize(5,1000, "bleeding");
+                break;
+        }        
+        
+    }
+
     public void Attack(int greenSum, int redSum)
     {
-        //green attack
+        ////green attack
         if (greenSum != 0) {
-            BoardController.board.monster.TakeDMG(greenSum );
-            Debug.Log("Player normal attack. Green is "+ greenSum);
+            weapon.NormalAttacks(greenSum);
+            //BoardController.board.monster.TakeDMG(greenSum );
+            //Debug.Log("Player normal attack. Green is "+ greenSum);
         }
 
         //red attack: 
         if (redSum != 0) {
-            // power attack, add bleeding to monster
-            this.AddBuff("power", redSum);
-            BoardController.board.monster.AddBuff ("bleeding",redSum);
-            BoardController.board.monster.TakeDMG(redSum );
+            //// power attack, add bleeding to monster
+            weapon.PowerAttacks(redSum);
+            //this.AddBuff("power", redSum);
+            //BoardController.board.monster.AddBuff ("bleeding",redSum);
+            //BoardController.board.monster.TakeDMG(redSum );
             Debug.Log("Player power attack. Red is " + redSum);
         }        
     }

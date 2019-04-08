@@ -228,10 +228,7 @@ public class BoardController : MonoBehaviour
                     Destroy(piece);
                 }
             }
-            UpdateScoreBoard();
-
-            ///show sum at certain color board ******************************unfinished, edited here when unity ready******************************
-            Debug.Log(string.Format( "black =  {0} , blue =  {1}， green = {2}, purple = {3}, red = {4}" , blackSum ,blueSum ,greenSum , purpleSum , redSum));            
+            UpdateScoreBoard();                    
 
             //Debug.Log( "black = " + blackSum + "; blue = " + blueSum + "; green = " + greenSum + "; purple = " + purpleSum + "; red = " + redSum);
 
@@ -302,10 +299,11 @@ public class BoardController : MonoBehaviour
                     }
                 }                
 
-                //if attack pieces(green & red) matched , player attack
+                //if attack pieces(green & red) matched , player attack use weapon
                 if (greenSum != 0 || redSum != 0)
                 {
-                    player.Attack(greenSum, redSum);   
+                    player.weapon.NormalAttacks(greenSum);
+                    player.weapon.PowerAttacks(redSum);
                 }
 
 
@@ -739,13 +737,14 @@ public class BoardController : MonoBehaviour
     /// <param name="initialDistance">initial distance</param>
     public void InitializeCreature(float playerMaxHP, float monsterMaxHp, float initialDistance)
     {
-        //initialize creature and distance
-        player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();
-        player.InitializeHPSlider(100f);
+        //initialize creature and distance        
         monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
         monster.InitializeHPSlider(200f);
         monster.InitializeAttackInfo(10f,1f,5f,1f);
         this.initialDistance = initialDistance;
+
+        player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();
+        player.Initialize(100f,"longbow");
     }
     
 }

@@ -36,7 +36,7 @@ public class Buff : MonoBehaviour
                 break;
             case "bleeding":
                 this.type = Type.bleeding;
-                this.gameObject.GetComponent<Image>().color = new Color(0.69f, 0.059f, 0.059f); ;
+                this.gameObject.GetComponent<Image>().color = new Color(0.69f, 0.059f, 0.059f);
                 //this.gameObject.GetComponent<Image>().sprite = Resources.Load( Image path);
                 break;
         }
