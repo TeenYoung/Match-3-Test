@@ -29,6 +29,7 @@ public class Creature : MonoBehaviour {
 
     public void TakeDMG(float dmg)
     {
+        Debug.Log(this.name + "take dmg" + dmg);
         this.CurrentHP -= dmg;
         SetHPSlider();
     }  
@@ -56,13 +57,13 @@ public class Creature : MonoBehaviour {
         {
             Buff buff = buffObj.GetComponent<Buff>();
             buff.RemainTurn += buffTurn;
-            buff.UpdateBuff();
+            buff.UpdateBuffTurnText();
         }
         else
         {
             buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
             Buff buff = buffObj.GetComponent<Buff>();
-            buff.Initialize(buffType, buffTurn, buffZone.transform);
+            buff.Initialize(buffType, buffTurn, buffZone.transform, this);
             buffList.Add(buffObj);
         }
     }
@@ -74,6 +75,7 @@ public class Creature : MonoBehaviour {
             for (int i = buffList.Count - 1; i >= 0; i--)
             {
                 Buff buff = buffList[i].GetComponent<Buff>();
+                buff.BuffAffect();
                 buff.RemainTurn--;
                 if (buff.RemainTurn < 0)
                 {
@@ -87,10 +89,17 @@ public class Creature : MonoBehaviour {
                 }
                 else
                 {
-                    buff.UpdateBuff();
+                    buff.UpdateBuffTurnText();
                 }
             }
         }
+    }
+
+    public void BuffClear()
+    {
+        //buff calculate
+        //buff turn decrease
+        //buff update
     }
 
 }

@@ -230,8 +230,6 @@ public class BoardController : MonoBehaviour
             }
             UpdateScoreBoard();                    
 
-            //Debug.Log( "black = " + blackSum + "; blue = " + blueSum + "; green = " + greenSum + "; purple = " + purpleSum + "; red = " + redSum);
-
             // Collapse existing pieces on board after a delay
             yield return new WaitForSeconds(collapseDelay);
             for (int i = 0; i < boardWidth; i++)
@@ -295,18 +293,18 @@ public class BoardController : MonoBehaviour
                     {
                         if (distance < Mathf.Max(monster.PowerAttackRange, monster.NormalAttackRange))
                         {
-                            player.AddBuff("dodge");
-                            player.IsDodge = true;
+                            player.AddBuff("dodge",2);
+                            //player.IsDodge = true;
                         }                        
                         else player.Move(blueSum);
                     }
                 }                
 
-                //if attack pieces(green & red) matched , player attack use weapon
+                //if attack pieces(green & red) matched , player attack using weapon
                 if (greenSum != 0 || redSum != 0)
                 {
 
-                    //green for normal attack, add weapon buff to monster
+                    //green for normal attack,
                     player.weapon.NormalAttacks(greenSum);
                     //red for power attack 
                     player.weapon.PowerAttacks(redSum);
@@ -320,11 +318,13 @@ public class BoardController : MonoBehaviour
                 greenSum = 0;
                 redSum = 0;
                 if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
+                
                 player.BuffDecreaseOne();
 
 
-                //monster turn begins, monster act after player's action
+             //monster turn begins, monster act after player's action
                 monster.Action(distance, player.IsDodge);
+                UpdateDistanceBoard();
 
 
                 //monster attack if player in attack range
@@ -350,11 +350,10 @@ public class BoardController : MonoBehaviour
                 //    UpdateDistanceBoard();
                 //}  
 
-             //monster turn ends   
+                //monster turn ends   
                 monster.BuffDecreaseOne();
             }
         };
-        //Debug.Log("Player's current HP is" + monster.CurrentHP);
 
         //player lose when HP not more than 0 or move count come to end but monster still alive
         if ((moveCount >= moveLimit && monster.CurrentHP > 0) || player.CurrentHP <= 0)

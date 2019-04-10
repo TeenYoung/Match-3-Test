@@ -16,12 +16,14 @@ public class Buff : MonoBehaviour
 {   
     public Text remainTurnsText;
     public Type type;
+    public Creature creature;
 
     public int RemainTurn { get; set; }
     
     //bufftype: Bleeding, Stunning, 
-    public void Initialize(string buffType, int remainTurn, Transform buffZone)
+    public void Initialize(string buffType, int remainTurn, Transform buffZone, Creature creature)
     {
+        this.creature = creature;
         switch (buffType)
         {
             case "power":
@@ -31,7 +33,8 @@ public class Buff : MonoBehaviour
                 break;
             case "dodge":
                 this.type = Type.dodge;
-                this.gameObject.GetComponent<Image>().color = new Color(0.537f, 0.667f, 0.859f);
+                this.gameObject.GetComponent<Image>().color = new Color(0.537f, 0.667f, 0.859f);                
+                this.creature.IsDodge = true;
                 //this.gameObject.GetComponent<Image>().sprite = Resources.Load( Image path);
                 break;
             case "bleeding":
@@ -40,33 +43,28 @@ public class Buff : MonoBehaviour
                 //this.gameObject.GetComponent<Image>().sprite = Resources.Load( Image path);
                 break;
         }
+        
         this.RemainTurn = remainTurn;
-        UpdateBuff();
+        UpdateBuffTurnText();
         this.gameObject.transform.SetParent(buffZone);
         
     }
 
-    public void UpdateBuff()
+    public void UpdateBuffTurnText()
     {
         remainTurnsText.text = RemainTurn.ToString();
-    }       
+    }   
     
-    //public void Clear()
-    //{
-    //    switch (this.type)
-    //    {
-    //        case 0:
-
-    //            break;
-    //        case 1:
-
-    //            break;
-    //        case 2:
-
-    //            break;
-    //    }
-    //    RemainTurn--;
-    //    UpdateBuff();
-    //}
+    public void BuffAffect()
+    {
+        switch (this.type)
+        {
+            case Type.bleeding:
+                Debug.Log(creature.name + type + " dmg " + RemainTurn * 10f);
+                creature.TakeDMG(RemainTurn*10f);
+                break;
+        }
+    }
+    
 
  }

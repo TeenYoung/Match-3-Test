@@ -51,7 +51,7 @@ public class Weapon : MonoBehaviour
     //how many times normal attack will triggered
     public void NormalAttacks(int piece)
     {
-        for(int i = 0; i < piece; i++)
+        for(int i = 0; i < Mathf.Floor(piece/3f); i++)
         {
             SingleNormalAttack();
         }

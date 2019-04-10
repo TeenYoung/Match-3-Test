@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Monster : Creature
 {
-    public float NormalAttackDMG { get; set; }
-    public float PowerAttackMultiply { get; set; }
     public float NormalAttackRange { get; set; }
+    public float NormalAttackDMG { get; set; }    
     public float PowerAttackRange { get; set; }
+    public float PowerAttackMultiply { get; set; }
 
     private float distance;
     //monster have only one action per turn
@@ -30,56 +30,27 @@ public class Monster : Creature
                 Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
                 BoardController.board.player.TakeDMG(NormalAttackDMG);
             }
-            else  //player has dodge buff
+            else  //player has dodge buff, monster attack miss
             {
                 Debug.Log("Monster attack miss!");
                 BoardController.board.player.IsDodge = false;
-            }
-                
-        }
-       
+            }                
+        }       
     }
 
 
-    //public void NormalAttack(bool miss)
-    //{
-    //    if (miss)
-    //    {
-    //        Debug.Log(" Normal attack miss! ");
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
-    //        BoardController.board.player.TakeDMG(NormalAttackDMG);
-    //    }
-    //}
-
-    //public void PowerAttack(bool miss)
-    //{
-    //    if (miss)
-    //    {
-    //        Debug.Log(" Power attack miss! ");
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
-    //        BoardController.board.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
-    //    }        
-    //}
-    
-
     /// <summary>
-    /// Set monster attack dmg and range
+    /// Use the first time generate a monster, set it's attack dmg and range
     /// </summary>
     /// <param name="NormalAttackRange"></param>
     /// <param name="NormalAttackDMG"></param>
     /// <param name="PowerAttackRange"></param>
-    /// <param name="PowerAttackDMG"></param>
-    public void InitializeAttackInfo(float NormalAttackRange, float NormalAttackDMG, float PowerAttackRange, float PowerAttackDMG)
+    /// <param name="PowerAttackMultiply"> power attack dmg = normal attack dmg * power attack multiply</param>
+    public void InitializeAttackInfo(float NormalAttackRange, float NormalAttackDMG, float PowerAttackRange, float PowerAttackMultiply)
     {
         this.NormalAttackRange = NormalAttackRange;
         this.NormalAttackDMG = NormalAttackDMG;
         this.PowerAttackRange = PowerAttackRange;
-        this.PowerAttackMultiply = PowerAttackDMG;
+        this.PowerAttackMultiply = PowerAttackMultiply;
     }
 }

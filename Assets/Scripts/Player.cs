@@ -6,13 +6,12 @@ using UnityEngine;
 public class Player : Creature
 {
     public Weapon weapon;
-    //public Player(string playerName, float initialHP) : base(playerName, initialHP)
-    //{
-    //    this.CreatureName = playerName;
-    //    this.currentHP = initialHP;
-    //}
 
-    //**************change input variable according to the way of attack***************
+    /// <summary>
+    /// use this function when first time generat a player, and include a weapon
+    /// </summary>
+    /// <param name="playerMaxHP"></param>
+    /// <param name="weaponType"></param>
     public void Initialize(float playerMaxHP, string weaponType)//float dmg, float ran, float attRate)
     {
         this.InitializeHPSlider(playerMaxHP);
@@ -36,11 +35,8 @@ public class Player : Creature
 
         //red attack: 
         if (redSum != 0) {
-            //// power attack, add bleeding to monster
+          //// power attack, add bleeding buff to monster
             weapon.PowerAttacks(redSum);
-            //this.AddBuff("power", redSum);
-            //BoardController.board.monster.AddBuff ("bleeding",redSum);
-            //BoardController.board.monster.TakeDMG(redSum );
             Debug.Log("Player power attack. Red is " + redSum);
         }        
     }
