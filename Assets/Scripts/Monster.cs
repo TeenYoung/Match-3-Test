@@ -5,36 +5,67 @@ using UnityEngine;
 public class Monster : Creature
 {
     public float NormalAttackDMG { get; set; }
-    public float PowerAttackDMG { get; set; }
+    public float PowerAttackMultiply { get; set; }
     public float NormalAttackRange { get; set; }
     public float PowerAttackRange { get; set; }
 
-   
-    public void NormalAttack(bool miss)
+    private float distance;
+    //monster have only one action per turn
+    public void Action(float distance, bool isMiss)
     {
-        if (miss)
+        this.distance = distance;
+        if (distance > Mathf.Max(PowerAttackRange, NormalAttackRange)) //if player out of attack range, monster move
         {
-            Debug.Log(" Normal attack miss! ");
+            Move(-5f);
         }
-        else
+        else 
         {
-            Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
-            BoardController.board.player.TakeDMG(NormalAttackDMG);
+            if (distance <= PowerAttackRange && !isMiss) //player in power attack range and no dodge buff
+            {
+                Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
+                BoardController.board.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
+            }
+            else if (distance > PowerAttackRange && distance <= NormalAttackRange && !isMiss)//player in normal attack range and no dodge buff
+            {
+                Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
+                BoardController.board.player.TakeDMG(NormalAttackDMG);
+            }
+            else  //player has dodge buff
+            {
+                Debug.Log("Monster attack miss!");
+                BoardController.board.player.IsDodge = false;
+            }
+                
         }
+       
     }
 
-    public void PowerAttack(bool miss)
-    {
-        if (miss)
-        {
-            Debug.Log(" Power attack miss! ");
-        }
-        else
-        {
-            Debug.Log("Monster power attack, making damage: " + PowerAttackDMG);
-            BoardController.board.player.TakeDMG(PowerAttackDMG);
-        }        
-    }
+
+    //public void NormalAttack(bool miss)
+    //{
+    //    if (miss)
+    //    {
+    //        Debug.Log(" Normal attack miss! ");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
+    //        BoardController.board.player.TakeDMG(NormalAttackDMG);
+    //    }
+    //}
+
+    //public void PowerAttack(bool miss)
+    //{
+    //    if (miss)
+    //    {
+    //        Debug.Log(" Power attack miss! ");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
+    //        BoardController.board.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
+    //    }        
+    //}
     
 
     /// <summary>
@@ -49,6 +80,6 @@ public class Monster : Creature
         this.NormalAttackRange = NormalAttackRange;
         this.NormalAttackDMG = NormalAttackDMG;
         this.PowerAttackRange = PowerAttackRange;
-        this.PowerAttackDMG = PowerAttackDMG;
+        this.PowerAttackMultiply = PowerAttackDMG;
     }
 }

@@ -48,12 +48,23 @@ public class Creature : MonoBehaviour {
         fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / MaxHP);
     }
 
-    public void AddBuff(string buffType, int buffTurn)
-    {        
-        GameObject buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
-        Buff buff = buffObj.GetComponent<Buff>(); 
-        buff.Initialize(buffType, buffTurn, buffZone.transform);
-        buffList.Add(buffObj);
+    //default buff work turn =1, if buff exist in list , add turns; if not , add new buff
+    public void AddBuff(string buffType, int buffTurn = 1)
+    {
+        GameObject buffObj = buffList.Find(x=>x.GetComponent<Buff>().type.ToString()==buffType);        
+        if (buffObj)
+        {
+            Buff buff = buffObj.GetComponent<Buff>();
+            buff.RemainTurn += buffTurn;
+            buff.UpdateBuff();
+        }
+        else
+        {
+            buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
+            Buff buff = buffObj.GetComponent<Buff>();
+            buff.Initialize(buffType, buffTurn, buffZone.transform);
+            buffList.Add(buffObj);
+        }
     }
 
     public void BuffDecreaseOne()

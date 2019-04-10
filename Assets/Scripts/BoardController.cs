@@ -294,7 +294,10 @@ public class BoardController : MonoBehaviour
                     if (blueSum != 0)
                     {
                         if (distance < Mathf.Max(monster.PowerAttackRange, monster.NormalAttackRange))
-                        player.AddBuff("dodge", blueSum);
+                        {
+                            player.AddBuff("dodge");
+                            player.IsDodge = true;
+                        }                        
                         else player.Move(blueSum);
                     }
                 }                
@@ -302,7 +305,10 @@ public class BoardController : MonoBehaviour
                 //if attack pieces(green & red) matched , player attack use weapon
                 if (greenSum != 0 || redSum != 0)
                 {
+
+                    //green for normal attack, add weapon buff to monster
                     player.weapon.NormalAttacks(greenSum);
+                    //red for power attack 
                     player.weapon.PowerAttacks(redSum);
                 }
 
@@ -317,28 +323,33 @@ public class BoardController : MonoBehaviour
                 player.BuffDecreaseOne();
 
 
-             //monster turn begins, monster act after player's action
+                //monster turn begins, monster act after player's action
+                monster.Action(distance, player.IsDodge);
+
+
                 //monster attack if player in attack range
-                if ( distance < Mathf.Max(monster.PowerAttackRange,monster.NormalAttackRange))
-                {                    
-                    //monster attack miss if player has dodge buff
-                    //if(player.buffList.Exists(x => x.GetComponent<Buff>())
-                    //{
-                    //    Debug.Log("Monster attack miss.");
-                    //}
-                    if (distance > monster.PowerAttackRange)
-                    {
-                        monster.NormalAttack(player.IsDodge);
-                    }
-                    else monster.PowerAttack(player.IsDodge);
-                }
-                // monster move if player out of attack range
-                else
-                {
-                    Debug.Log("Monster move, player out of attack range.");
-                    monster.Move(-5f);
-                    UpdateDistanceBoard();
-                }  
+
+                //if ( distance < Mathf.Max(monster.PowerAttackRange,monster.NormalAttackRange))
+                //{                    
+                //    //monster attack miss if player has dodge buff
+                //    //if(player.buffList.Exists(x => x.GetComponent<Buff>())
+                //    //{
+                //    //    Debug.Log("Monster attack miss.");
+                //    //}
+                //    if (distance > monster.PowerAttackRange)
+                //    {
+                //        monster.NormalAttack(player.IsDodge);
+                //    }
+                //    else monster.PowerAttack(player.IsDodge);
+                //}
+                //// monster move if player out of attack range
+                //else
+                //{
+                //    Debug.Log("Monster move, player out of attack range.");
+                //    monster.Move(-5f);
+                //    UpdateDistanceBoard();
+                //}  
+
              //monster turn ends   
                 monster.BuffDecreaseOne();
             }
@@ -740,7 +751,7 @@ public class BoardController : MonoBehaviour
         //initialize creature and distance        
         monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
         monster.InitializeHPSlider(200f);
-        monster.InitializeAttackInfo(10f,1f,5f,1f);
+        monster.InitializeAttackInfo(10f,5f,5f,1.8f);
         this.initialDistance = initialDistance;
 
         player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();

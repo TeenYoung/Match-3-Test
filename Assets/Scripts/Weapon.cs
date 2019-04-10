@@ -39,7 +39,7 @@ public class Weapon : MonoBehaviour
     private void SingleNormalAttack()
     {
         BoardController.board.monster.TakeDMG(this.Damage * normalAttackProficiency);
-        BoardController.board.monster.AddBuff(Debuff, 2);
+        BoardController.board.monster.AddBuff(Debuff);
     }
 
     ////monster take damage when player power attack, and multi damage
