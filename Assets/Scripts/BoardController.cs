@@ -46,9 +46,9 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         SetupBoard();
-        BattlefieldController.battlefield.SetupBattlefield();
+        //BattlefieldController.battlefield.SetupBattlefield();
 
-        StartShifting();
+        //StartShifting();
     }
 
     // Clear the board then start again
@@ -63,7 +63,7 @@ public class BoardController : MonoBehaviour
         SetupBoard();
         BattlefieldController.battlefield.SetupBattlefield();
 
-        StartShifting();
+        //StartShifting();
         
     }
 
