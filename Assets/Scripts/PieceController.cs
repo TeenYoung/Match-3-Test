@@ -65,7 +65,7 @@ public class PieceController : MonoBehaviour
     private void OnMouseDown()
     {
         // Only accept user inputs while the board is stable
-        if (board.boardState == State.stable)
+        if (board.boardState == BoardState.stable)
         {
             // use this to fix a weired case that a mouse down before boardState switchs to stable and a mouse up after
             isMouseDown = true;
@@ -93,7 +93,7 @@ public class PieceController : MonoBehaviour
     private void OnMouseDrag()
     {
         // Only accept user inputs while the board is stable
-        if (board.boardState == State.stable && isMouseDown)
+        if (board.boardState == BoardState.stable && isMouseDown)
         {
             // Get mouse position on the board
             Vector3 mousePosOnBoard = Camera.main.ScreenToWorldPoint(Input.mousePosition) + zOffset;
@@ -152,7 +152,7 @@ public class PieceController : MonoBehaviour
     private void OnMouseUp()
     {
         // Only accept user inputs while the board is stable
-        if (board.boardState == State.stable && isMouseDown)
+        if (board.boardState == BoardState.stable && isMouseDown)
         {
             isMouseDown = false;
 

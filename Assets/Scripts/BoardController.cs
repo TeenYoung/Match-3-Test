@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum State
+public enum BoardState
 {
     initializing,
     stable,
@@ -25,25 +25,8 @@ public class BoardController : MonoBehaviour
     public float clearDelay, collapseDelay, refillDelay, resortDelay,
         acceptInputDelay, findHintDelay, showHintDelay, shuffleDelay;
     public static BoardController board = null;
-    public State boardState = State.initializing;
-    public AudioClip clearPieces;         
-    
-    public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;   //count of different color pieces
-
-  //battle creature info
-    //creatures
-    public GameObject playerPrefab, monsterPrefab;
-    public Player player;
-    public Monster monster;
-
-    //distance
-    public Text distanceBoardText;
-    public float initialDistance;
-    public static float distance; //distance between monster and player    
-   
-    
-    int blackSum, blueSum, greenSum, purpleSum, redSum ;     // To calculate how many pieces was cleared in certain color
-    int purpleMax = 6;     // The num of purple pieces to trigger special 
+    public BoardState boardState = BoardState.initializing;
+    public AudioClip clearPieces;
 
     private int tileClearCount;
 
@@ -62,10 +45,10 @@ public class BoardController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitializeCreature(100f,200f,5f);
         SetupBoard();
+        BattlefieldController.battlefield.SetupBattlefield();
+
         StartShifting();
-        InitializeBoards();
     }
 
     // Clear the board then start again
@@ -75,12 +58,13 @@ public class BoardController : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        Destroy(player.gameObject);
-        Destroy(monster.gameObject);
-        InitializeCreature(100f, 200f, 5f);
+        BattlefieldController.battlefield.DestoryCreatures();
+
         SetupBoard();
+        BattlefieldController.battlefield.SetupBattlefield();
+
         StartShifting();
-        InitializeBoards();
+        
     }
 
     // Create a board (without any initial match)
@@ -123,7 +107,7 @@ public class BoardController : MonoBehaviour
     // Shuffle the board using Fisher-Yates shuffle algorithm
     void ShuffleBoard()
     {
-        boardState = State.shuffling;
+        boardState = BoardState.shuffling;
 
         int pieceNum = boardWidth * boardHeight;
 
@@ -149,13 +133,13 @@ public class BoardController : MonoBehaviour
             }
         }
 
-        boardState = State.idle;
+        boardState = BoardState.idle;
     }
 
     // Stop accepting user inputs and sort the board
     public void StartShifting()
     {
-        boardState = State.shifting;
+        boardState = BoardState.shifting;
 
         // Stop hint animation
         for (int i = 0; i < boardWidth; i++)
@@ -199,28 +183,7 @@ public class BoardController : MonoBehaviour
             {
                 if (piece != null)
                 {
-                    //count sum of matched pieces in colors
-                    switch (piece.tag)
-                    {
-                        case "Color_Black":
-                            blackSum ++;
-                            break;
-                        case "Color_Blue":
-                            blueSum ++;
-                            break;
-                        case "Color_Green":
-                            greenSum ++;
-                            break;
-                        case "Color_Purple": //add purpleSum when pieces less than purple max
-                            if (purpleSum <= purpleMax) { purpleSum++; }
-                            else { purpleSum = purpleMax; }                            
-                            break;
-                        case "Color_Red":
-                            redSum ++;
-                            break;                            
-                    }
-
-                    UpdateScoreBoard();
+                    BattlefieldController.battlefield.AddScore(piece);
 
                     int x = piece.GetComponent<PieceController>().myPosition.x;
                     int y = piece.GetComponent<PieceController>().myPosition.y;
@@ -228,7 +191,8 @@ public class BoardController : MonoBehaviour
                     Destroy(piece);
                 }
             }
-            UpdateScoreBoard();                    
+
+            BattlefieldController.battlefield.UpdateScores();
 
             // Collapse existing pieces on board after a delay
             yield return new WaitForSeconds(collapseDelay);
@@ -272,97 +236,18 @@ public class BoardController : MonoBehaviour
             yield return new WaitForSeconds(resortDelay);
             matchedPieces.Clear();
             matchedPieces.AddRange(CheckAllMatches());
-
-            //when no match, player act in certain order
-            if (matchedPieces.Count == 0)
-            {
-                //if special pieces ( purple ) matched , player active special
-                if (purpleSum == purpleMax)
-                {
-                    //Debug.Log(string.Format("Player special. Purple is {0}", purpleSum));
-                    player.UseItem(purpleSum);                   
-                }
-
-                //if move pieces ( blue & black) matched , player move
-                if (blueSum != 0 || blackSum != 0)
-                {
-                    player.Move(blackSum);
-                    UpdateDistanceBoard();
-                    // if bulesum >0, player add dodge buff 2 turns
-                    if (blueSum != 0)
-                    {
-                        if (distance < Mathf.Max(monster.PowerAttackRange, monster.NormalAttackRange))
-                        {
-                            player.AddBuff("dodge",2);
-                            //player.IsDodge = true;
-                        }                        
-                        else player.Move(blueSum);
-                    }
-                }                
-
-                //if attack pieces(green & red) matched , player attack using weapon
-                if (greenSum != 0 || redSum != 0)
-                {
-
-                    //green for normal attack,
-                    player.weapon.NormalAttacks(greenSum);
-                    //red for power attack 
-                    player.weapon.PowerAttacks(redSum);
-                }
-
-
-             //player turn ends
-                //reset martched pieces sum when no match
-                blackSum = 0;
-                blueSum = 0;
-                greenSum = 0;
-                redSum = 0;
-                if (purpleSum == purpleMax) purpleSum = 0;  //reset purple when special triggered
-                
-                player.BuffDecreaseOne();
-
-
-             //monster turn begins, monster act after player's action
-                monster.Action(distance, player.IsDodge);
-                UpdateDistanceBoard();
-
-
-                //monster attack if player in attack range
-
-                //if ( distance < Mathf.Max(monster.PowerAttackRange,monster.NormalAttackRange))
-                //{                    
-                //    //monster attack miss if player has dodge buff
-                //    //if(player.buffList.Exists(x => x.GetComponent<Buff>())
-                //    //{
-                //    //    Debug.Log("Monster attack miss.");
-                //    //}
-                //    if (distance > monster.PowerAttackRange)
-                //    {
-                //        monster.NormalAttack(player.IsDodge);
-                //    }
-                //    else monster.PowerAttack(player.IsDodge);
-                //}
-                //// monster move if player out of attack range
-                //else
-                //{
-                //    Debug.Log("Monster move, player out of attack range.");
-                //    monster.Move(-5f);
-                //    UpdateDistanceBoard();
-                //}  
-
-                //monster turn ends   
-                monster.BuffDecreaseOne();
-            }
         };
 
+        BattlefieldController.battlefield.Battle();
+
         //player lose when HP not more than 0 or move count come to end but monster still alive
-        if ((moveCount >= moveLimit && monster.CurrentHP > 0) || player.CurrentHP <= 0)
+        if ((moveCount >= moveLimit && BattlefieldController.battlefield.monster.CurrentHP > 0) || BattlefieldController.battlefield.player.CurrentHP <= 0)
         {
             levelEndText.text = "FAILED";
             levelEndPanel.SetActive(true);
         }
         //player win when monster HP not more than 0
-        else if (monster.CurrentHP <= 0)
+        else if (BattlefieldController.battlefield.monster.CurrentHP <= 0)
         {
             levelEndText.text = "COMPLETED";
             levelEndPanel.SetActive(true);
@@ -371,7 +256,7 @@ public class BoardController : MonoBehaviour
         {
             //    Start to accept user inputs again after a small delay
             yield return new WaitForSeconds(acceptInputDelay);
-            boardState = State.stable;
+            boardState = BoardState.stable;
 
             //    Check for hints and suffle the board if nothing found
             StartCoroutine(ShowHintCoroutine());
@@ -561,8 +446,6 @@ public class BoardController : MonoBehaviour
         return matchedPieces;
     }
 
-
-
     // Simulate upwards and rightwards swaps start from (x,y), if it will result in a match return all pieces of the first potential match
     List<GameObject> CheckPotentialMatch(int x, int y)
     {
@@ -669,7 +552,7 @@ public class BoardController : MonoBehaviour
         yield return new WaitForSeconds(findHintDelay);
 
         // Continue when the board is stable and player makes no new match since this coroutine starts
-        if (boardState == State.stable && moveCount == previousMoveCount)
+        if (boardState == BoardState.stable && moveCount == previousMoveCount)
         {
             List<GameObject> firstPotentialMatch = CheckAllPotentialMatches();
 
@@ -677,14 +560,14 @@ public class BoardController : MonoBehaviour
             while (firstPotentialMatch == null)
             {
                 ShuffleBoard();
-                while (boardState == State.shuffling)
+                while (boardState == BoardState.shuffling)
                 {
                     yield return new WaitForSeconds(.1f);
                 }
                 yield return new WaitForSeconds(shuffleDelay);
 
                 StartShifting();
-                while (boardState == State.shifting)
+                while (boardState == BoardState.shifting)
                 {
                     yield return new WaitForSeconds(.1f);
                 }
@@ -694,7 +577,7 @@ public class BoardController : MonoBehaviour
 
             // Show hint after a delay 
             yield return new WaitForSeconds(showHintDelay);
-            if (boardState == State.stable && moveCount == previousMoveCount)
+            if (boardState == BoardState.stable && moveCount == previousMoveCount)
             {
                 
                 for (int i = 0; i < firstPotentialMatch.Count; i++)
@@ -709,53 +592,34 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    //initialize score board to 0
-    public void InitializeBoards()
-    {
-        blackSum = 0;
-        blueSum = 0;
-        greenSum = 0;
-        redSum = 0;
-        purpleSum = 0;
-        UpdateScoreBoard();
+    ////initialize score board to 0
+    //public void InitializeBoards()
+    //{
+    //    blackSum = 0;
+    //    blueSum = 0;
+    //    greenSum = 0;
+    //    redSum = 0;
+    //    purpleSum = 0;
+    //    BattlefieldController.battlefield.UpdateScores();
 
-        distance = initialDistance;
-        UpdateDistanceBoard();
-        
-    }
+    //    distance = initialDistance;
+    //    UpdateDistanceBoard(); 
+    //}
 
-    //update score board
-    public void UpdateScoreBoard()
-    {
-        blackScoreText.text = blackSum.ToString();
-        blueScoreText.text = blueSum.ToString();
-        greenScoreText.text = greenSum.ToString();
-        redScoreText.text = redSum.ToString();
-        purpleScoreText.text = purpleSum.ToString();
-    }    
+    ////update score board
+    //public void UpdateScoreBoard()
+    //{
+    //    blackScoreText.text = blackSum.ToString();
+    //    blueScoreText.text = blueSum.ToString();
+    //    greenScoreText.text = greenSum.ToString();
+    //    redScoreText.text = redSum.ToString();
+    //    purpleScoreText.text = purpleSum.ToString();
+    //}    
 
-    public void UpdateDistanceBoard()
-    {
-        distanceBoardText.text = distance.ToString();
-    }
-
-    /// <summary>
-    /// Initialize monster and player
-    /// </summary>
-    /// <param name="playerMaxHP">player's initial HP</param>
-    /// <param name="monsterMaxHp">monster's initial HP</param> 
-    /// <param name="initialDistance">initial distance</param>
-    public void InitializeCreature(float playerMaxHP, float monsterMaxHp, float initialDistance)
-    {
-        //initialize creature and distance        
-        monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
-        monster.InitializeHPSlider(200f);
-        monster.InitializeAttackInfo(10f,5f,5f,1.8f);
-        this.initialDistance = initialDistance;
-
-        player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();
-        player.Initialize(100f,"longbow");
-    }
+    //public void UpdateDistanceBoard()
+    //{
+    //    distanceBoardText.text = distance.ToString();
+    //}
     
 }
 

@@ -1081,7 +1081,7 @@ RectTransform:
   - {fileID: 570521911}
   - {fileID: 1127149957}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1810,7 +1810,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &738614399
 AudioSource:
@@ -1987,6 +1987,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 833391681}
   m_CullTransparentMesh: 0
+--- !u!1 &855954182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 855954184}
+  - component: {fileID: 855954183}
+  m_Layer: 0
+  m_Name: BattlefieldController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &855954183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855954182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc51e3b0fae48b546bb068b2960dc430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blackScoreText: {fileID: 1826481921}
+  blueScoreText: {fileID: 93938516}
+  greenScoreText: {fileID: 989559055}
+  purpleScoreText: {fileID: 833391683}
+  redScoreText: {fileID: 92827672}
+--- !u!4 &855954184
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855954182}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &989559053
 GameObject:
   m_ObjectHideFlags: 0
@@ -2130,7 +2178,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1127149953
 GameObject:
@@ -2746,16 +2794,9 @@ MonoBehaviour:
   shuffleDelay: 0.4
   boardState: 0
   clearPieces: {fileID: 8300000, guid: 3613c559789fe1442b04c81188cd1222, type: 3}
-  blackScoreText: {fileID: 1826481921}
-  blueScoreText: {fileID: 93938516}
-  greenScoreText: {fileID: 989559055}
-  purpleScoreText: {fileID: 833391683}
-  redScoreText: {fileID: 92827672}
   playerPrefab: {fileID: 193368995764267772, guid: c82cdfa72ee43a84b9732c1f28ed38a9,
     type: 3}
   monsterPrefab: {fileID: 1669387234111515459, guid: 0e67b42264d917546b416172ed2c2a31,
-    type: 3}
-  buffPrefab: {fileID: 5830208788185106171, guid: a233c55508d303441974800662f9efe5,
     type: 3}
   player: {fileID: 0}
   monster: {fileID: 0}
