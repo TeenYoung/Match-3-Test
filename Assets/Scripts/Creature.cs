@@ -9,9 +9,14 @@ public class Creature : MonoBehaviour {
     public Image fillImage;
     public Color fullHpColor, zeroHpColor;
     public GameObject buffPrefab, buffZone;
-    
 
-    public List<GameObject> buffList = new List<GameObject>();
+    /*
+     buff結算三種類型：
+        每輪開始:列表buffEffectInBeginning，按照buff生效順序結算，各自調用buff.effective()函數，調用完自動清算buff顯示
+        效果觸發時:觸發時調用buff.effective()函數，調用完清算buff顯示
+        每輪結束前：按照buff生效順序結算，各自調用buff.effective()函數，調用完自動清算buff顯示
+    */
+    public List<GameObject> decreaseByTurnBuffList = new List<GameObject>();
 
     public bool IsDodge { get; set; }
 
@@ -23,7 +28,7 @@ public class Creature : MonoBehaviour {
 
     public void Move(float feet)
     {
-        BoardController.distance += feet;
+        BattlefieldController.battlefield.Distance += feet;
         //Debug.Log("Distance is " + BoardController.distance);
     }
 
@@ -50,9 +55,9 @@ public class Creature : MonoBehaviour {
     }
 
     //default buff work turn =1, if buff exist in list , add turns; if not , add new buff
-    public void AddBuff(string buffType, int buffTurn = 1)
+    public void AddBuff(BuffType buffType, int buffTurn = 1)
     {
-        GameObject buffObj = buffList.Find(x=>x.GetComponent<Buff>().type.ToString()==buffType);        
+        GameObject buffObj = decreaseByTurnBuffList.Find(x=>x.GetComponent<Buff>().type == buffType);        
         if (buffObj)
         {
             Buff buff = buffObj.GetComponent<Buff>();
@@ -61,30 +66,34 @@ public class Creature : MonoBehaviour {
         }
         else
         {
+            
             buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
             Buff buff = buffObj.GetComponent<Buff>();
-            buff.Initialize(buffType, buffTurn, buffZone.transform, this);
-            buffList.Add(buffObj);
+        // search buff type in database and generat object then get Buff instance and initialize it ************************** edit here with database info and wrap spl commends 
+            string imgPath = "sprites/icons/BGM" ;
+
+            buff.Initialize(buffType, buffTurn, buffZone.transform, this, imgPath, 1, true);
+            decreaseByTurnBuffList.Add(buffObj);
         }
     }
 
     public void BuffDecreaseOne()
     {
-        if (buffList != null)
+        if (decreaseByTurnBuffList != null)
         {
-            for (int i = buffList.Count - 1; i >= 0; i--)
+            for (int i = decreaseByTurnBuffList.Count - 1; i >= 0; i--)
             {
-                Buff buff = buffList[i].GetComponent<Buff>();
-                buff.BuffAffect();
+                Buff buff = decreaseByTurnBuffList[i].GetComponent<Buff>();
+                buff.Trigger();
                 buff.RemainTurn--;
                 if (buff.RemainTurn < 0)
                 {
-                    Destroy(buffList[i]);
-                    buffList.Remove(buffList[i]);
+                    Destroy(decreaseByTurnBuffList[i]);
+                    decreaseByTurnBuffList.Remove(decreaseByTurnBuffList[i]);
                 }
                 else if (buff.RemainTurn == 0) //keep the space of buff turn=0 , make it invisible
                 {
-                    buffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                    decreaseByTurnBuffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
                     buff.remainTurnsText.text = "";
                 }
                 else

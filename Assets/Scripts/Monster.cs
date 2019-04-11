@@ -23,17 +23,17 @@ public class Monster : Creature
             if (distance <= PowerAttackRange && !isMiss) //player in power attack range and no dodge buff
             {
                 Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
-                BoardController.board.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
+                BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
             }
             else if (distance > PowerAttackRange && distance <= NormalAttackRange && !isMiss)//player in normal attack range and no dodge buff
             {
                 Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
-                BoardController.board.player.TakeDMG(NormalAttackDMG);
+                BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG);
             }
             else  //player has dodge buff, monster attack miss
             {
                 Debug.Log("Monster attack miss!");
-                BoardController.board.player.IsDodge = false;
+                BattlefieldController.battlefield.player.IsDodge = false;
             }                
         }       
     }

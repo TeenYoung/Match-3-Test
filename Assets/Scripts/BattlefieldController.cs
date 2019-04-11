@@ -19,9 +19,10 @@ public class BattlefieldController : MonoBehaviour
     //Properties
     public int MaxPurpleScore { get; set; }
     public float InitialDistance { get; set; }
+    public float Distance { get; set; }
 
     private int blackScore, blueScore, greenScore, redScore, purpleScore;
-    private float distance;
+    
 
 
     private void Awake()
@@ -122,7 +123,7 @@ public class BattlefieldController : MonoBehaviour
         greenScore = player.weapon.GreenAction(greenScore);
         UpdateScores();
 
-        monster.Action(distance, player.IsDodge);
+        monster.Action(Distance, player.IsDodge);
         UpdateDistance();
 
 
@@ -175,14 +176,14 @@ public class BattlefieldController : MonoBehaviour
 
     public void ResetDistance()
     {
-        distance = InitialDistance;
+        Distance = InitialDistance;
 
         UpdateDistance();
     }
 
     void UpdateDistance()
     {
-        distanceText.text = distance.ToString();
+        distanceText.text = Distance.ToString();
     }
 
     public void DestoryCreatures()

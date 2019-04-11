@@ -18,7 +18,7 @@ public class Player : Creature
         switch (weaponType)
         {
             case "longbow":
-                weapon.Initialize(5,1000, "bleeding");
+                weapon.Initialize(5,1000,BuffType.bleeding);
                 break;
         }        
         
@@ -28,7 +28,7 @@ public class Player : Creature
     {
         ////green attack
         if (greenSum != 0) {
-            weapon.NormalAttacks(greenSum);
+            weapon.GreenAction(greenSum);
             //BoardController.board.monster.TakeDMG(greenSum );
             //Debug.Log("Player normal attack. Green is "+ greenSum);
         }
@@ -36,9 +36,14 @@ public class Player : Creature
         //red attack: 
         if (redSum != 0) {
           //// power attack, add bleeding buff to monster
-            weapon.PowerAttacks(redSum);
+            weapon.RedAction(redSum);
             Debug.Log("Player power attack. Red is " + redSum);
         }        
+    }
+
+    public void Dodge(int blueSum)
+    {
+        AddBuff(BuffType.dodge);
     }
 
     //player use items
