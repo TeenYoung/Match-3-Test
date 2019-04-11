@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum BattlefieldState
+{
+    initializing,
+    waiting,
+    battle
+}
+
 public class BattlefieldController : MonoBehaviour
 {
     public static BattlefieldController battlefield = null;
+    public BattlefieldState battlefieldState = BattlefieldState.initializing;
 
     //UI
     public Text blackScoreText, blueScoreText, greenScoreText, purpleScoreText, redScoreText;
@@ -126,32 +134,8 @@ public class BattlefieldController : MonoBehaviour
         monster.Action(Distance, player.IsDodge);
         UpdateDistance();
 
-
-        //monster attack if player in attack range
-
-        //if ( distance < Mathf.Max(monster.PowerAttackRange,monster.NormalAttackRange))
-        //{                    
-        //    //monster attack miss if player has dodge buff
-        //    //if(player.buffList.Exists(x => x.GetComponent<Buff>())
-        //    //{
-        //    //    Debug.Log("Monster attack miss.");
-        //    //}
-        //    if (distance > monster.PowerAttackRange)
-        //    {
-        //        monster.NormalAttack(player.IsDodge);
-        //    }
-        //    else monster.PowerAttack(player.IsDodge);
-        //}
-        //// monster move if player out of attack range
-        //else
-        //{
-        //    Debug.Log("Monster move, player out of attack range.");
-        //    monster.Move(-5f);
-        //    UpdateDistanceBoard();
-        //}  
-
-        //monster turn ends   
-        monster.BuffDecreaseOne();
+        battlefieldState = BattlefieldState.waiting;
+        print("Battle End");
     }
 
     public void ClearScores()

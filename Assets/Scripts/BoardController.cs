@@ -27,6 +27,7 @@ public class BoardController : MonoBehaviour
     public static BoardController board = null;
     public BoardState boardState = BoardState.initializing;
     public AudioClip clearPieces;
+    public BattlefieldController battlefield;
 
     private int tileClearCount;
 
@@ -46,9 +47,9 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         SetupBoard();
-        //BattlefieldController.battlefield.SetupBattlefield();
+        //battlefield.SetupBattlefield();
 
-        //StartShifting();
+        StartShifting();
     }
 
     // Clear the board then start again
@@ -58,13 +59,12 @@ public class BoardController : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        BattlefieldController.battlefield.DestoryCreatures();
+        battlefield.DestoryCreatures();
 
         SetupBoard();
-        BattlefieldController.battlefield.SetupBattlefield();
+        battlefield.SetupBattlefield();
 
-        //StartShifting();
-        
+        StartShifting();
     }
 
     // Create a board (without any initial match)
@@ -183,7 +183,7 @@ public class BoardController : MonoBehaviour
             {
                 if (piece != null)
                 {
-                    BattlefieldController.battlefield.AddScore(piece);
+                    battlefield.AddScore(piece);
 
                     int x = piece.GetComponent<PieceController>().myPosition.x;
                     int y = piece.GetComponent<PieceController>().myPosition.y;
@@ -192,7 +192,7 @@ public class BoardController : MonoBehaviour
                 }
             }
 
-            BattlefieldController.battlefield.UpdateScores();
+            battlefield.UpdateScores();
 
             // Collapse existing pieces on board after a delay
             yield return new WaitForSeconds(collapseDelay);
@@ -238,16 +238,19 @@ public class BoardController : MonoBehaviour
             matchedPieces.AddRange(CheckAllMatches());
         };
 
-        BattlefieldController.battlefield.Battle();
+        if (battlefield.battlefieldState == BattlefieldState.battle)
+        {
+            battlefield.Battle();
+        }
 
         //player lose when HP not more than 0 or move count come to end but monster still alive
-        if ((moveCount >= moveLimit && BattlefieldController.battlefield.monster.CurrentHP > 0) || BattlefieldController.battlefield.player.CurrentHP <= 0)
+        if ((moveCount >= moveLimit && battlefield.monster.CurrentHP > 0) || battlefield.player.CurrentHP <= 0)
         {
             levelEndText.text = "FAILED";
             levelEndPanel.SetActive(true);
         }
         //player win when monster HP not more than 0
-        else if (BattlefieldController.battlefield.monster.CurrentHP <= 0)
+        else if (battlefield.monster.CurrentHP <= 0)
         {
             levelEndText.text = "COMPLETED";
             levelEndPanel.SetActive(true);
@@ -600,7 +603,7 @@ public class BoardController : MonoBehaviour
     //    greenSum = 0;
     //    redSum = 0;
     //    purpleSum = 0;
-    //    BattlefieldController.battlefield.UpdateScores();
+    //    battlefield.UpdateScores();
 
     //    distance = initialDistance;
     //    UpdateDistanceBoard(); 

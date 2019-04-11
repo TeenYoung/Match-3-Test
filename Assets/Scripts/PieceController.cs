@@ -17,6 +17,7 @@ public class PieceController : MonoBehaviour
     private List<GameObject> neighbors;
     private List<Vector3Int> destinations;
     private BoardController board = BoardController.board;
+    private BattlefieldController battlefield = BattlefieldController.battlefield;
     private bool isMouseDown = false;
 
 
@@ -173,7 +174,10 @@ public class PieceController : MonoBehaviour
                         board.moveCount++;
                         board.moveCountText.text = (board.moveLimit - board.moveCount).ToString();
                         Swap(neighborPos);
+                        battlefield.battlefieldState = BattlefieldState.battle;
+                        print("Battle Start");
                         board.StartShifting();
+
                     }
 
                     // Play sound effect of swap back if will not match

@@ -2016,6 +2016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc51e3b0fae48b546bb068b2960dc430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  battlefieldState: 0
   blackScoreText: {fileID: 1826481921}
   blueScoreText: {fileID: 93938516}
   greenScoreText: {fileID: 989559055}
@@ -2040,7 +2041,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &989559053
 GameObject:
@@ -2801,6 +2802,7 @@ MonoBehaviour:
   shuffleDelay: 0.4
   boardState: 0
   clearPieces: {fileID: 8300000, guid: 3613c559789fe1442b04c81188cd1222, type: 3}
+  battlefield: {fileID: 855954183}
 --- !u!4 &1689537494
 Transform:
   m_ObjectHideFlags: 0
@@ -2813,7 +2815,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1712556826
 GameObject:
