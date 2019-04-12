@@ -87,45 +87,44 @@ public class Creature : MonoBehaviour {
             
             if(buffType == BuffType.dodge)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, 0, piece * 20);
-                BuffList.Add(buff);
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, piece * 20);                
             }
             if(buffType == BuffType.bleeding)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, 10, 0);
-                BuffList.Add(buff);
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 10, 0);                
             }
-            
+            BuffList.Add(buff);
             //decreaseByTurnBuffList.Add(buffObj);
         }
     }
 
-    public void BuffDecreaseOne()
-    {
-        if (BuffList != null)
-        {
-            for (int i = BuffList.Count - 1; i >= 0; i--)
-            {
-                Buff buff = BuffList[i].GetComponent<Buff>();
-                buff.Trigger();
-                buff.RemainTurn--;
-                if (buff.RemainTurn < 0)
-                {
-                    Destroy(BuffList[i]);
-                    BuffList.Remove(BuffList[i]);
-                }
-                else if (buff.RemainTurn == 0) //keep the space of buff turn=0 , make it invisible
-                {
-                    BuffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
-                    buff.remainTurnsText.text = "";
-                }
-                else
-                {
-                    buff.UpdateBuffTurnText();
-                }
-            }
-        }
-    }
+
+    //public void BuffDecreaseOne()
+    //{
+    //    if (BuffList != null)
+    //    {
+    //        for (int i = BuffList.Count - 1; i >= 0; i--)
+    //        {
+    //            Buff buff = BuffList[i].GetComponent<Buff>();
+    //            buff.Trigger();
+    //            buff.RemainTurn--;
+    //            if (buff.RemainTurn < 0)
+    //            {
+    //                Destroy(BuffList[i]);
+    //                BuffList.Remove(BuffList[i]);
+    //            }
+    //            else if (buff.RemainTurn == 0) //keep the space of buff turn=0 , make it invisible
+    //            {
+    //                BuffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
+    //                buff.remainTurnsText.text = "";
+    //            }
+    //            else
+    //            {
+    //                buff.UpdateBuffTurnText();
+    //            }
+    //        }
+    //    }
+    //}
 
     //use after dodge happen, reset dodgerate to 0 ,and clear buff object
     public void DodgeReset()

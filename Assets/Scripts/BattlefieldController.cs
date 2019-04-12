@@ -102,6 +102,25 @@ public class BattlefieldController : MonoBehaviour
 
     public void Battle()
     {
+        //monster buff trigger in turn start
+        for (int i = monster.BuffList.Count -1; i >=0 ; i--)
+        { 
+            if (monster.BuffList[i].tag == "TriggerAt_TurnBegin")
+            {
+                monster.BuffList[i].Trigger();
+                ////remove buff from list if the object = null;
+                //if (!monster.BuffList[i])
+                //{
+                //    monster.BuffList.RemoveAt(i);
+                //}
+                if (monster.BuffList[i].RemainTurn == 0)
+                {
+                    Destroy(monster.BuffList[i].gameObject);
+                    monster.BuffList.RemoveAt(i);
+                }
+            }
+        }
+
         if (purpleScore == MaxPurpleScore)
         {
             print("Item used");
@@ -129,8 +148,12 @@ public class BattlefieldController : MonoBehaviour
         redScore = player.weapon.RedAction(redScore);
         UpdateScores();
 
+        
         greenScore = player.weapon.GreenAction(greenScore);
+        greenScore = 0;
         UpdateScores();
+
+     //monster action        
 
         monster.Action(Distance);
         UpdateDistance();
