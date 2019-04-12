@@ -44,24 +44,26 @@ public class Buff : MonoBehaviour
     //            //this.gameObject.GetComponent<Image>().sprite = Resources.Load( Image path);
     //            break;
     //    }
-        
+
     //    this.RemainTurn = remainTurn;
     //    UpdateBuffTurnText();
     //    this.gameObject.transform.SetParent(buffZone);
-        
+
     //}
 
-    //
-    public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, string imgPath,float bleedingDMGRate, bool isDodge)
+    //public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, string imgPath,float bleedingDMGRate, bool isDodge)
+    public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Color color, float bleedingDMGRate, float dodgeRate)
     {
         this.type = type;
         this.RemainTurn = remainTurn;
         this.gameObject.transform.SetParent(buffZone);
         this.creature = creature;
-        this.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>(imgPath);
+        this.gameObject.GetComponent<Image>().color = color;
+        //this.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>(imgPath) as Sprite; //need to re-edit
+
         this.bleedingDMGRate = bleedingDMGRate;
         UpdateBuffTurnText();
-        this.creature.IsDodge = isDodge;
+        this.creature.DodgeRate = dodgeRate;
     }
 
     public void UpdateBuffTurnText()
@@ -75,6 +77,8 @@ public class Buff : MonoBehaviour
         {
             Debug.Log(creature.name + type + " dmg " + RemainTurn * bleedingDMGRate);
             creature.TakeDMG(RemainTurn * bleedingDMGRate);
+            RemainTurn--;
+            UpdateBuffTurnText();
         }        
     }
 

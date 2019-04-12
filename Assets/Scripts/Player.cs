@@ -20,8 +20,7 @@ public class Player : Creature
             case "longbow":
                 weapon.Initialize(5,1000,BuffType.bleeding);
                 break;
-        }        
-        
+        } 
     }
 
     public void Attack(int greenSum, int redSum)
@@ -43,9 +42,9 @@ public class Player : Creature
 
     public void Dodge(int blueSum)
     {
-        AddBuff(BuffType.dodge);
+        AddBuff(BuffType.dodge, blueSum);
     }
-
+    
     //player use items
     public void UseItem(int purpleSum)
     {

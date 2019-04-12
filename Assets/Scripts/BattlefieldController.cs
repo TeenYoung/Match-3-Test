@@ -132,7 +132,7 @@ public class BattlefieldController : MonoBehaviour
         greenScore = player.weapon.GreenAction(greenScore);
         UpdateScores();
 
-        monster.Action(Distance, player.IsDodge);
+        monster.Action(Distance);
         UpdateDistance();
 
         battlefieldState = BattlefieldState.waiting;

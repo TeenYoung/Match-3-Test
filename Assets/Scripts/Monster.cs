@@ -11,32 +11,52 @@ public class Monster : Creature
 
     private float distance;
     //monster have only one action per turn
-    public void Action(float distance, bool isMiss)
+
+    public void Action(float distance)
     {
         this.distance = distance;
         if (distance > Mathf.Max(PowerAttackRange, NormalAttackRange)) //if player out of attack range, monster move
         {
             Move(-5f);
         }
-        else 
+        else if (distance <= PowerAttackRange) //player in power attack range and no dodge buff
         {
-            if (distance <= PowerAttackRange && !isMiss) //player in power attack range and no dodge buff
-            {
                 Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
                 BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
-            }
-            else if (distance > PowerAttackRange && distance <= NormalAttackRange && !isMiss)//player in normal attack range and no dodge buff
-            {
+        }
+        else if (distance > PowerAttackRange && distance <= NormalAttackRange)//player in normal attack range and no dodge buff
+        {
                 Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
                 BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG);
-            }
-            else  //player has dodge buff, monster attack miss
-            {
-                Debug.Log("Monster attack miss!");
-                BattlefieldController.battlefield.player.IsDodge = false;
-            }                
-        }       
+        }           
+        
     }
+    //public void Action(float distance, bool isMiss)
+    //{
+    //    this.distance = distance;
+    //    if (distance > Mathf.Max(PowerAttackRange, NormalAttackRange)) //if player out of attack range, monster move
+    //    {
+    //        Move(-5f);
+    //    }
+    //    else 
+    //    {
+    //        if (distance <= PowerAttackRange && !isMiss) //player in power attack range and no dodge buff
+    //        {
+    //            Debug.Log("Monster power attack, making damage: " + NormalAttackDMG * PowerAttackMultiply);
+    //            BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG * PowerAttackMultiply);
+    //        }
+    //        else if (distance > PowerAttackRange && distance <= NormalAttackRange && !isMiss)//player in normal attack range and no dodge buff
+    //        {
+    //            Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
+    //            BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG);
+    //        }
+    //        else  //player has dodge buff, monster attack miss
+    //        {
+    //            Debug.Log("Monster attack miss!");
+    //            BattlefieldController.battlefield.player.IsDodge = false;
+    //        }                
+    //    }       
+    //}
 
 
     /// <summary>
