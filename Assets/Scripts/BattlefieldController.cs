@@ -24,14 +24,15 @@ public class BattlefieldController : MonoBehaviour
     public Monster monster;
     public GameObject playerPrefab, monsterPrefab;
 
+    //
+    public ItemController items;
+
     //Properties
     public int MaxPurpleScore { get; set; }
     public float InitialDistance { get; set; }
     public float Distance { get; set; }
 
     private int blackScore, blueScore, greenScore, redScore, purpleScore;
-    
-
 
     private void Awake()
     {
