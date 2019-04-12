@@ -9,6 +9,9 @@ TagManager:
   - Color_Purple
   - Color_Red
   - Color_Blue
+  - TriggerAt_TurnBegin
+  - TriggerAt_TurnEnd
+  - TriggerAt_TakeDMG
   layers:
   - Default
   - TransparentFX
