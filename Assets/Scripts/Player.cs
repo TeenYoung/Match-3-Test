@@ -6,13 +6,14 @@ using UnityEngine;
 public class Player : Creature
 {
     public Weapon weapon;
+    private float dodgeRatePerPiece;
 
     /// <summary>
     /// use this function when first time generat a player, and include a weapon
     /// </summary>
     /// <param name="playerMaxHP"></param>
     /// <param name="weaponType"></param>
-    public void Initialize(float playerMaxHP, string weaponType)//float dmg, float ran, float attRate)
+    public void Initialize(float playerMaxHP, string weaponType, float dodgeRatePerPiece)//float dmg, float ran, float attRate)
     {
         this.InitializeHPSlider(playerMaxHP);
         switch (weaponType)
@@ -20,7 +21,8 @@ public class Player : Creature
             case "longbow":
                 weapon.Initialize(5,1000,BuffType.bleeding);
                 break;
-        } 
+        }
+        this.dodgeRatePerPiece = dodgeRatePerPiece;
     }
 
     public void Attack(int greenSum, int redSum)
@@ -42,7 +44,7 @@ public class Player : Creature
 
     public void Dodge(int blueSum)
     {
-        AddBuff(BuffType.dodge, blueSum);
+        AddBuff(BuffType.dodge, blueSum * dodgeRatePerPiece);
     }
     
     //player use items

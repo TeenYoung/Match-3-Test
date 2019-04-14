@@ -10,6 +10,7 @@ public enum BuffType
     dodge,
     stunning,
     bleeding,
+    healing,
 }
 
 public class Buff : MonoBehaviour
@@ -19,7 +20,9 @@ public class Buff : MonoBehaviour
     public Creature creature;
 
     public int RemainTurn { get; set; }
+
     float bleedingDMGRate;
+    float healHP;
 
 
 
@@ -35,7 +38,7 @@ public class Buff : MonoBehaviour
     /// <param name="bleedingDMGRate"></param>
     /// <param name="dodgeRate"></param>
     ////public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Image image, string tagName,float bleedingDMGRate, float dodgeRate
-    public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Color color, string tagName,float bleedingDMGRate, float dodgeRate)
+    public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Color color, string tagName,float bleedingDMGRate, float dodgeRate,float healHP)
     {
         this.type = type;
         this.RemainTurn = remainTurn;
@@ -68,7 +71,14 @@ public class Buff : MonoBehaviour
             //{
             //    Destroy(this.gameObject);
             //}
-        }        
+        }
+        if (healHP != 0)
+        {
+            Debug.Log("Healing buff triggered.");
+            creature.Healing(healHP);
+            this.RemainTurn--;
+            UpdateBuffTurnText();
+        }
     }
 
 }

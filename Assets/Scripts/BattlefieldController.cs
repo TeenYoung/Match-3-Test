@@ -97,7 +97,7 @@ public class BattlefieldController : MonoBehaviour
     void InstantiatePlayer()
     {
         player = Instantiate(playerPrefab, new Vector3(0.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Player>();
-        player.Initialize(100f, "longbow");
+        player.Initialize(100f, "longbow", 20);
     }
 
     public void Battle()

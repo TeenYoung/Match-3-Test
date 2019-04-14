@@ -52,6 +52,13 @@ public class Creature : MonoBehaviour {
         DodgeReset();//whether dodge success or not, dodge buff reset
     }  
     
+    public void Healing(float heal)
+    {
+        Debug.Log("Recover HP: " + heal);
+        this.CurrentHP += heal;
+        SetHPSlider();
+    }
+
     public void InitializeHPSlider(float maxHP)
     {
         this.MaxHP = maxHP;
@@ -68,7 +75,7 @@ public class Creature : MonoBehaviour {
     }
 
     //default buff work turn =1, if buff exist in list , add turns; if not , add new buff
-    public void AddBuff(BuffType buffType,int piece, int buffTurn = 1)
+    public void AddBuff(BuffType buffType,float num, int buffTurn = 1)
     {
         Buff buff = BuffList.Find(x => x.type == buffType);
         //GameObject buffObj = buff.gameObject;        
@@ -85,13 +92,17 @@ public class Creature : MonoBehaviour {
             //Buff buff = buffObj.GetComponent<Buff>();
             // search buff type in database and generat object then get Buff instance and initialize it ************************** edit here with database info and wrap spl commends 
             
-            if(buffType == BuffType.dodge)
+            if(buffType == BuffType.dodge)//use piece to calculate dodge rate,
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, piece * 20);                
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, num, 0);                
             }
             if(buffType == BuffType.bleeding)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 10, 0);                
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 5, 0, 0);                
+            }
+            if (buffType == BuffType.healing)
+            {
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num);
             }
             BuffList.Add(buff);
             //decreaseByTurnBuffList.Add(buffObj);

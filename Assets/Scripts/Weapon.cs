@@ -35,11 +35,11 @@ public class Weapon : MonoBehaviour
         this.powerAttackRate = powerAttackRate;
     }
 
-    //monster take damage when player normal attack, and add buff
-    private void SingleNormalAttack(int piece)
+    //monster take damage when player normal attack, and add buff, 
+    private void SingleNormalAttack(int num)
     {
         BattlefieldController.battlefield.monster.TakeDMG(this.Damage * normalAttackRate);
-        BattlefieldController.battlefield.monster.AddBuff(Debuff, piece);
+        BattlefieldController.battlefield.monster.AddBuff(Debuff, num);
     }
 
     ////monster take damage when player power attack, and multi damage
