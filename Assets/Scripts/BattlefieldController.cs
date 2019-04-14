@@ -49,6 +49,7 @@ public class BattlefieldController : MonoBehaviour
     private void Start()
     {
         MaxPurpleScore = 6;//Temp
+        InitialDistance = 10;//Temp
         SetupBattlefield();
     }
 
@@ -60,7 +61,7 @@ public class BattlefieldController : MonoBehaviour
             switch (piece.tag)
             {
                 case "Color_Black":
-                    blueScore++;
+                    blackScore++;
                     break;
                 case "Color_Blue":
                     blueScore++;
@@ -119,7 +120,7 @@ public class BattlefieldController : MonoBehaviour
             if (redScore != 0) // if there is charge buff, dodge will reset it 
             {
                 player.ChargeReset();
-            }            
+            }
             player.Move(blueScore / 3);
             blueScore = 0;
             UpdateScores();
@@ -128,10 +129,6 @@ public class BattlefieldController : MonoBehaviour
         if (blackScore != 0)
         {
             player.Move(blackScore);
-            if (redScore != 0)
-            {
-                player.ChargeReset();
-            }
             UpdateDistance();
             blackScore = 0;
             UpdateScores();
