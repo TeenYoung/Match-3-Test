@@ -69,7 +69,7 @@ public class BattlefieldController : MonoBehaviour
                     greenScore++;
                     break;
                 case "Color_Purple": //add purpleSum when pieces less than purple max
-                    if (purpleScore <= MaxPurpleScore) { purpleScore++; }
+                    if (purpleScore < MaxPurpleScore) { purpleScore++; }
                     else { purpleScore = MaxPurpleScore; }
                     break;
                 case "Color_Red":
@@ -123,7 +123,7 @@ public class BattlefieldController : MonoBehaviour
 
         if (purpleScore == MaxPurpleScore)
         {
-            print("Item used");
+            items.UseSelectedItem();
             purpleScore = 0;
             UpdateScores();
         }

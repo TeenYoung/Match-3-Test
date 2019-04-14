@@ -5,7 +5,9 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
 
-    private int recoverHP, recoverTurns;
+    public int RecoverHP { get; set; }
+    public int RecoverTurns { get; set; }
+
 
     private ItemController items;
 
@@ -16,8 +18,8 @@ public class Item : MonoBehaviour
 
     public void SetItem(int recoverHP, int recoverTurns)
     {
-        this.recoverHP = recoverHP;
-        this.recoverTurns = recoverTurns;
+        this.RecoverHP = recoverHP;
+        this.RecoverTurns = recoverTurns;
     }
 
     public void OnClick()
