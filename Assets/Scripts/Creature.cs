@@ -52,7 +52,7 @@ public class Creature : MonoBehaviour {
         DodgeReset();//whether dodge success or not, dodge buff reset
     }  
     
-    public void Healing(float heal)
+    public void Heal(float heal)
     {
         Debug.Log("Recover HP: " + heal);
         this.CurrentHP += heal;

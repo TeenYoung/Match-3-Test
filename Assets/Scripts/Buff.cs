@@ -75,7 +75,7 @@ public class Buff : MonoBehaviour
         if (healHP != 0)
         {
             Debug.Log("Healing buff triggered.");
-            creature.Healing(healHP);
+            creature.Heal(healHP);
             this.RemainTurn--;
             UpdateBuffTurnText();
         }
