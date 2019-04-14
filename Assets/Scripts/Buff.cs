@@ -51,6 +51,7 @@ public class Buff : MonoBehaviour
         this.bleedingDMGRate = bleedingDMGRate;
         UpdateBuffTurnText();
         this.creature.DodgeRate = dodgeRate;
+        this.healHP = healHP;
     }
 
     public void UpdateBuffTurnText()
