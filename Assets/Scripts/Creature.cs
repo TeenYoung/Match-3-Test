@@ -56,6 +56,10 @@ public class Creature : MonoBehaviour {
     {
         Debug.Log("Recover HP: " + heal);
         this.CurrentHP += heal;
+        if (this.CurrentHP >= this.MaxHP)
+        {
+            this.CurrentHP = this.MaxHP;
+        }
         SetHPSlider();
     }
 
