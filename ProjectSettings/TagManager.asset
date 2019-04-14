@@ -12,6 +12,7 @@ TagManager:
   - TriggerAt_TurnBegin
   - TriggerAt_TurnEnd
   - TriggerAt_TakeDMG
+  - TriggerAt_Attack
   layers:
   - Default
   - TransparentFX

@@ -16,32 +16,33 @@ public class Creature : MonoBehaviour {
         效果觸發時:觸發時調用buff.effective()函數，調用完清算buff顯示
         每輪結束前：按照buff生效順序結算，各自調用buff.effective()函數，調用完自動清算buff顯示
     */
+
     public List<Buff> BuffList = new List<Buff>();
 
-    public float DodgeRate { get; set; }
-
-    public string CreatureName { get; set; }
-
+    
     public float CurrentHP { get; set; }
 
-    public float MaxHP { get; set; }
+    public float dodgeRate;
+
+    float maxHP;
+    
 
     public void Move(float feet)
     {
         BattlefieldController.battlefield.Distance += feet;
         //Debug.Log("Distance is " + BoardController.distance);
-    }
+    }    
 
     public void TakeDMG(float dmg)
     {
         float r = Random.Range(0, 100f); // use to calculate if dodge success
-        if ( DodgeRate != 0 && r <= DodgeRate) 
+        if ( dodgeRate != 0 && r <= dodgeRate) 
         {
             Debug.Log("Attack miss! Random is " + r);           
         }
         else
         {
-            if (DodgeRate != 0)
+            if (dodgeRate != 0)
             {
                 Debug.Log("Miss unsuccessful. Random is " + r);
             }
@@ -56,18 +57,18 @@ public class Creature : MonoBehaviour {
     {
         Debug.Log("Recover HP: " + heal);
         this.CurrentHP += heal;
-        if (this.CurrentHP >= this.MaxHP)
+        if (this.CurrentHP >= this.maxHP)
         {
-            this.CurrentHP = this.MaxHP;
+            this.CurrentHP = this.maxHP;
         }
         SetHPSlider();
     }
 
     public void InitializeHPSlider(float maxHP)
     {
-        this.MaxHP = maxHP;
-        hpSlider.maxValue = this.MaxHP;
-        this.CurrentHP = this.MaxHP;
+        this.maxHP = maxHP;
+        hpSlider.maxValue = this.maxHP;
+        this.CurrentHP = this.maxHP;
         hpSlider.value = this.CurrentHP;
         SetHPSlider();
     }
@@ -75,7 +76,7 @@ public class Creature : MonoBehaviour {
     void SetHPSlider()
     {
         hpSlider.value = this.CurrentHP;       
-        fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / MaxHP);
+        fillImage.color = Color.Lerp(zeroHpColor, fullHpColor, CurrentHP / maxHP);
     }
 
     //default buff work turn =1, if buff exist in list , add turns; if not , add new buff
@@ -108,11 +109,36 @@ public class Creature : MonoBehaviour {
             {
                 buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num);
             }
+            if(buffType == BuffType.charge)
+            {
+                buff.Initialize(buffType, System.Convert.ToInt32(num), buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0);
+            }
             BuffList.Add(buff);
             //decreaseByTurnBuffList.Add(buffObj);
         }
     }
 
+    
+    public void BuffListTrigger(string tagName)
+    {
+        for (int i = this.BuffList.Count - 1; i >= 0; i--)
+        {
+            if (this.BuffList[i].tag == tagName)
+            {
+                this.BuffList[i].Trigger();
+                ////remove buff from list if the object = null;
+                //if (!monster.BuffList[i])
+                //{
+                //    monster.BuffList.RemoveAt(i);
+                //}
+                if (this.BuffList[i].RemainTurn == 0)
+                {
+                    Destroy(this.BuffList[i].gameObject);
+                    this.BuffList.RemoveAt(i);
+                }
+            }
+        }
+    }
 
     //public void BuffDecreaseOne()
     //{
@@ -146,11 +172,21 @@ public class Creature : MonoBehaviour {
     {
         Buff buff = BuffList.Find(x => x.type == BuffType.dodge);
         BuffList.Remove(buff);
-        DodgeRate = 0;
+        dodgeRate = 0;
         if (buff)
         {
             Destroy(buff.gameObject);
         }
     }   
 
+    public void ChargeReset()
+    {
+        Buff buff = BuffList.Find(x => x.type == BuffType.charge);
+        BuffList.Remove(buff);
+        dodgeRate = 0;
+        if (buff)
+        {
+            Destroy(buff.gameObject);
+        }
+    }
 }

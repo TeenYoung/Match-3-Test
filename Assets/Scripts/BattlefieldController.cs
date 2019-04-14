@@ -103,23 +103,8 @@ public class BattlefieldController : MonoBehaviour
     public void Battle()
     {
         //monster buff trigger in turn start
-        for (int i = monster.BuffList.Count -1; i >=0 ; i--)
-        { 
-            if (monster.BuffList[i].tag == "TriggerAt_TurnBegin")
-            {
-                monster.BuffList[i].Trigger();
-                ////remove buff from list if the object = null;
-                //if (!monster.BuffList[i])
-                //{
-                //    monster.BuffList.RemoveAt(i);
-                //}
-                if (monster.BuffList[i].RemainTurn == 0)
-                {
-                    Destroy(monster.BuffList[i].gameObject);
-                    monster.BuffList.RemoveAt(i);
-                }
-            }
-        }
+        player.BuffListTrigger("TriggerAt_TurnBegin");
+        monster.BuffListTrigger("TriggerAt_TurnBegin");
 
         if (purpleScore == MaxPurpleScore)
         {
@@ -131,6 +116,10 @@ public class BattlefieldController : MonoBehaviour
         if (blueScore != 0)
         {
             player.Dodge(blueScore);
+            if (redScore != 0) // if there is charge buff, dodge will reset it 
+            {
+                player.ChargeReset();
+            }            
             player.Move(blueScore / 3);
             blueScore = 0;
             UpdateScores();
@@ -139,6 +128,10 @@ public class BattlefieldController : MonoBehaviour
         if (blackScore != 0)
         {
             player.Move(blackScore);
+            if (redScore != 0)
+            {
+                player.ChargeReset();
+            }
             UpdateDistance();
             blackScore = 0;
             UpdateScores();

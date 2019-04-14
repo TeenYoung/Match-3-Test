@@ -11,6 +11,7 @@ public enum BuffType
     stunning,
     bleeding,
     healing,
+    charge,
 }
 
 public class Buff : MonoBehaviour
@@ -50,7 +51,7 @@ public class Buff : MonoBehaviour
 
         this.bleedingDMGRate = bleedingDMGRate;
         UpdateBuffTurnText();
-        this.creature.DodgeRate = dodgeRate;
+        this.creature.dodgeRate = dodgeRate;
         this.healHP = healHP;
     }
 
@@ -75,11 +76,12 @@ public class Buff : MonoBehaviour
         }
         if (healHP != 0)
         {
-            Debug.Log("Healing buff triggered.");
+            Debug.Log(creature.name + " healing buff triggered.");
             creature.Heal(healHP);
             this.RemainTurn--;
             UpdateBuffTurnText();
         }
+        
     }
 
 }

@@ -28,8 +28,7 @@ public class Monster : Creature
         {
                 Debug.Log("Monster normal attack, making damage: " + NormalAttackDMG);
                 BattlefieldController.battlefield.player.TakeDMG(NormalAttackDMG);
-        }           
-        
+        }
     }
     //public void Action(float distance, bool isMiss)
     //{
