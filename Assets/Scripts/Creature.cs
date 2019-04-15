@@ -9,6 +9,8 @@ public class Creature : MonoBehaviour {
     public Image fillImage;
     public Color fullHpColor, zeroHpColor;
     public GameObject buffPrefab, buffZone;
+    
+    public float CurrentHP { get; set; }
 
     /*
      buff結算三種類型：
@@ -17,15 +19,12 @@ public class Creature : MonoBehaviour {
         每輪結束前：按照buff生效順序結算，各自調用buff.effective()函數，調用完自動清算buff顯示
     */
 
-    public List<Buff> BuffList = new List<Buff>();
-
-    
-    public float CurrentHP { get; set; }
+    public List<Buff> BuffList = new List<Buff>(); 
 
     public float dodgeRate;
+    public bool isCharging; 
 
-    float maxHP;
-    
+    float maxHP;    
 
     public void Move(float feet)
     {
@@ -44,7 +43,7 @@ public class Creature : MonoBehaviour {
         {
             if (dodgeRate != 0)
             {
-                Debug.Log("Miss unsuccessful. Random is " + r);
+                Debug.Log("Dodge failed. Random is " + r);
             }
             Debug.Log(this.name + "take dmg" + dmg);
             this.CurrentHP -= dmg;
@@ -112,6 +111,7 @@ public class Creature : MonoBehaviour {
             if(buffType == BuffType.charge)
             {
                 buff.Initialize(buffType, System.Convert.ToInt32(num), buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0);
+                this.isCharging = true;
             }
             BuffList.Add(buff);
             //decreaseByTurnBuffList.Add(buffObj);
@@ -188,5 +188,6 @@ public class Creature : MonoBehaviour {
         {
             Destroy(buff.gameObject);
         }
+        this.isCharging = false;
     }
 }

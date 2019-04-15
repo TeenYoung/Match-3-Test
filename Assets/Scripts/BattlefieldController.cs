@@ -117,7 +117,7 @@ public class BattlefieldController : MonoBehaviour
         if (blueScore != 0)
         {
             player.Dodge(blueScore);
-            if (redScore != 0) // if there is charge buff, dodge will reset it 
+            if (player.isCharging) // if there is charge buff, dodge will reset it 
             {
                 player.ChargeReset();
             }
@@ -135,13 +135,19 @@ public class BattlefieldController : MonoBehaviour
         }
 
         //Execute weapon actions and return remaining scores
-        redScore = player.weapon.RedAction(redScore);
-        UpdateScores();
+        if (redScore != 0)
+        {
+            redScore = player.weapon.RedAction(redScore);
+            UpdateScores();
+        }
 
+        if (greenScore != 0)
+        {
+            greenScore = player.weapon.GreenAction(greenScore);
+            greenScore = 0;
+            UpdateScores();
+        }
         
-        greenScore = player.weapon.GreenAction(greenScore);
-        greenScore = 0;
-        UpdateScores();
 
      //monster action        
 
@@ -150,6 +156,35 @@ public class BattlefieldController : MonoBehaviour
 
         battlefieldState = BattlefieldState.waiting;
         print("Battle End");
+
+        player.DodgeReset(); //reset dodge if it haven't triggered, dodge only last one turn
+    }
+
+    public void ResetSingleScore(string color)
+    {
+        switch (color)
+        {
+            case "black":
+                blackScore = 0;
+                blackScoreText.text = blackScore.ToString();
+                break;
+            case "blue":
+                blueScore = 0;
+                blueScoreText.text = blueScore.ToString();
+                break;
+            case "green":
+                greenScore = 0;
+                greenScoreText.text = greenScore.ToString();
+                break;
+            case "red":
+                redScore = 0;
+                redScoreText.text = redScore.ToString();
+                break;
+            case "purple":
+                purpleScore = 0;
+                purpleScoreText.text = purpleScore.ToString();
+                break;
+        }
     }
 
     public void ClearScores()
