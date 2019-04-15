@@ -17,7 +17,8 @@ public class Monster : Creature
         this.distance = distance;
         if (distance > Mathf.Max(PowerAttackRange, NormalAttackRange)) //if player out of attack range, monster move
         {
-            Move(-5f);
+            Move(-3f);
+            Debug.Log("Monster move 3.");
         }
         else if (distance <= PowerAttackRange) //player in power attack range and no dodge buff
         {

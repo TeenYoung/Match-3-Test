@@ -117,7 +117,7 @@ public class BattlefieldController : MonoBehaviour
         if (blueScore != 0)
         {
             player.Dodge(blueScore);
-            if (player.isCharging) // if there is charge buff, dodge will reset it 
+            if (player.ChargeLayer != 0) // if there is charge buff, dodge will reset it 
             {
                 player.ChargeReset();
             }
@@ -138,6 +138,7 @@ public class BattlefieldController : MonoBehaviour
         if (redScore != 0)
         {
             redScore = player.weapon.RedAction(redScore);
+            redScore = 0;
             UpdateScores();
         }
 

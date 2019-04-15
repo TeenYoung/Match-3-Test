@@ -21,27 +21,27 @@ public class Creature : MonoBehaviour {
 
     public List<Buff> BuffList = new List<Buff>(); 
 
-    public float dodgeRate;
-    public bool isCharging; 
+    public float DodgeRate { get; set; }
+    public int ChargeLayer { get; set; }
 
     float maxHP;    
 
     public void Move(float feet)
     {
         BattlefieldController.battlefield.Distance += feet;
-        //Debug.Log("Distance is " + BoardController.distance);
+        Debug.Log(this.name + " move.");
     }    
 
     public void TakeDMG(float dmg)
     {
         float r = Random.Range(0, 100f); // use to calculate if dodge success
-        if ( dodgeRate != 0 && r <= dodgeRate) 
+        if ( this.DodgeRate != 0 && r <= this.DodgeRate) 
         {
             Debug.Log("Attack miss! Random is " + r);           
         }
         else
         {
-            if (dodgeRate != 0)
+            if (this.DodgeRate != 0)
             {
                 Debug.Log("Dodge failed. Random is " + r);
             }
@@ -49,6 +49,9 @@ public class Creature : MonoBehaviour {
             this.CurrentHP -= dmg;
             SetHPSlider();            
         }
+        this.ChargeReset();
+
+        Debug.Log("Chargelayer is " + this.ChargeLayer);
         DodgeReset();//whether dodge success or not, dodge buff reset
     }  
     
@@ -85,36 +88,42 @@ public class Creature : MonoBehaviour {
         //GameObject buffObj = buff.gameObject;        
         if (buff)
         {
-            //Buff buff = buffObj.GetComponent<Buff>();
-            buff.RemainTurn += buffTurn;
+            if (buffType == BuffType.charge) //charge buff add charge layer
+            {
+                this.ChargeLayer += System.Convert.ToInt32(num);
+                buff.BuffNum = this.ChargeLayer;
+                Debug.Log("charge layer is" + ChargeLayer);
+            }
+            else
+            {
+                buff.BuffNum += buffTurn;
+            }
             buff.UpdateBuffTurnText();
         }
         else
         {            
             GameObject buffObj = Instantiate(buffPrefab, this.transform.position, Quaternion.identity);
             buff = buffObj.GetComponent<Buff>();
-            //Buff buff = buffObj.GetComponent<Buff>();
             // search buff type in database and generat object then get Buff instance and initialize it ************************** edit here with database info and wrap spl commends 
             
             if(buffType == BuffType.dodge)//use piece to calculate dodge rate,
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, num, 0);                
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, num, 0, 0);                
             }
-            if(buffType == BuffType.bleeding)
+            else if(buffType == BuffType.bleeding)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 5, 0, 0);                
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 5, 0, 0, 0);                
             }
-            if (buffType == BuffType.healing)
+            else if (buffType == BuffType.healing)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num);
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num, 0);
             }
-            if(buffType == BuffType.charge)
+            else if(buffType == BuffType.charge)
             {
-                buff.Initialize(buffType, System.Convert.ToInt32(num), buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0);
-                this.isCharging = true;
+                //this.ChargeLayer = System.Convert.ToInt32(num);
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0, System.Convert.ToInt32(num));                
             }
             BuffList.Add(buff);
-            //decreaseByTurnBuffList.Add(buffObj);
         }
     }
 
@@ -131,7 +140,7 @@ public class Creature : MonoBehaviour {
                 //{
                 //    monster.BuffList.RemoveAt(i);
                 //}
-                if (this.BuffList[i].RemainTurn == 0)
+                if (this.BuffList[i].BuffNum == 0)
                 {
                     Destroy(this.BuffList[i].gameObject);
                     this.BuffList.RemoveAt(i);
@@ -140,39 +149,12 @@ public class Creature : MonoBehaviour {
         }
     }
 
-    //public void BuffDecreaseOne()
-    //{
-    //    if (BuffList != null)
-    //    {
-    //        for (int i = BuffList.Count - 1; i >= 0; i--)
-    //        {
-    //            Buff buff = BuffList[i].GetComponent<Buff>();
-    //            buff.Trigger();
-    //            buff.RemainTurn--;
-    //            if (buff.RemainTurn < 0)
-    //            {
-    //                Destroy(BuffList[i]);
-    //                BuffList.Remove(BuffList[i]);
-    //            }
-    //            else if (buff.RemainTurn == 0) //keep the space of buff turn=0 , make it invisible
-    //            {
-    //                BuffList[i].GetComponent<Image>().color = new Color(0, 0, 0, 0);
-    //                buff.remainTurnsText.text = "";
-    //            }
-    //            else
-    //            {
-    //                buff.UpdateBuffTurnText();
-    //            }
-    //        }
-    //    }
-    //}
-
-    //use after dodge happen, reset dodgerate to 0 ,and clear buff object
+    
     public void DodgeReset()
     {
         Buff buff = BuffList.Find(x => x.type == BuffType.dodge);
         BuffList.Remove(buff);
-        dodgeRate = 0;
+        this.DodgeRate = 0;
         if (buff)
         {
             Destroy(buff.gameObject);
@@ -183,11 +165,11 @@ public class Creature : MonoBehaviour {
     {
         Buff buff = BuffList.Find(x => x.type == BuffType.charge);
         BuffList.Remove(buff);
-        dodgeRate = 0;
+        this.ChargeLayer = 0;
         if (buff)
         {
             Destroy(buff.gameObject);
         }
-        this.isCharging = false;
+        
     }
 }

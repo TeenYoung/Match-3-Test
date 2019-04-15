@@ -13,7 +13,7 @@ public class Weapon : MonoBehaviour
      */
     float normalAttackRate;
     float powerAttackRate;
-    float chargeRate;
+    float chargeModifier;
     int greenActionNum, redActionNum;
     float powRate = 1.4f;//initialize this when initializ weapon =================================================================
 
@@ -28,14 +28,13 @@ public class Weapon : MonoBehaviour
     /// <param name="powerAttackMultiply">power attack dmg = Damage * PowerAttackMultiply, default value = 1</param>
     /// <param name="normalAttackRate"> default value = 1</param>
     /// <param name="powerAttackRate"> default value = 1</param>
-    public void Initialize(float dmg, float range, BuffType debuff, int greenActionNum, int redActionNum, float chargeRate = 0, float powerAttackMultiply = 1, float normalAttackRate = 0, float powerAttackRate = 1)
+    public void Initialize(float dmg, float range, BuffType debuff, int greenActionNum, int redActionNum,  float powerAttackMultiply = 1, float normalAttackRate = 0, float powerAttackRate = 1)
     {
         this.WeaponDamage = dmg;
         this.WeaponRange = range;
         this.Debuff = debuff;
         this.greenActionNum = greenActionNum;
         this.redActionNum = redActionNum;
-        this.chargeRate = chargeRate;
         this.PowerAttackMultiply = powerAttackMultiply;
         this.normalAttackRate = normalAttackRate;
         this.powerAttackRate = powerAttackRate;
@@ -44,12 +43,15 @@ public class Weapon : MonoBehaviour
     //monster take damage when player normal attack, and add buff, 
     private void SingleNormalAttack(int num)
     {
-        BattlefieldController.battlefield.monster.TakeDMG(this.WeaponDamage *(1 + this.normalAttackRate + this.chargeRate));
-        if (this.chargeRate != 0)
+        Debug.Log("Player attack.");
+        this.chargeModifier = Mathf.Pow((1 + (BattlefieldController.battlefield.player.ChargeLayer) / 3f), powRate) - 1;
+        BattlefieldController.battlefield.monster.TakeDMG(this.WeaponDamage *(1 + this.normalAttackRate + this.chargeModifier));
+        if (this.chargeModifier != 0)
         {
-            this.chargeRate = 0;
+            Debug.Log("It's a charged attack.");            
             BattlefieldController.battlefield.player.ChargeReset();
-            BattlefieldController.battlefield.ResetSingleScore("red");
+            this.chargeModifier = 0;
+            //BattlefieldController.battlefield.ResetSingleScore("red");
         }
         BattlefieldController.battlefield.monster.AddBuff(Debuff, num);
     }
@@ -63,19 +65,16 @@ public class Weapon : MonoBehaviour
     //how many times normal attack will triggered *******************************edit retain piece info, it should = 0 if used, or retain piece
     public int GreenAction(int piece)
     {
-        switch (this.greenActionNum)
+        if (this.greenActionNum == 0)//normal attack
         {
-            case 0: //normal attack
-                if (piece != 0)
+            if (piece != 0)
+            {
+                for (int i = 0; i < Mathf.Floor(piece / 3f); i++)
                 {
-                    for (int i = 0; i < Mathf.Floor(piece / 3f); i++)
-                    {
-                        SingleNormalAttack(piece);
-                    }
+                    SingleNormalAttack(piece);
                 }
-                break;
+            }            
         }
-        
         return piece;
     }
 
@@ -99,15 +98,15 @@ public class Weapon : MonoBehaviour
     public int RedAction(int piece)
     {
         //1:charge,  enhance normal attack, move and dodge will make charge rate reset
-        switch (this.redActionNum)
+        if (this.redActionNum == 0)//charge, enhance normal attack, it will reset when move or take dmg
         {
-            case 0: //charge, enhance normal attack, it will reset when move or take dmg
-                if (piece != 0)
-                {                       
-                    chargeRate = Mathf.Pow((1 + piece / 3), powRate) - 1;
-                }
-                BattlefieldController.battlefield.player.AddBuff(BuffType.charge, piece);                
-                break;
+            if (piece != 0)
+            {
+                BattlefieldController.battlefield.player.AddBuff(BuffType.charge, piece);
+                //this.chargeModifier = Mathf.Pow((1 + (BattlefieldController.battlefield.player.ChargeLayer) / 3f), powRate)-1;
+                //Debug.Log("ChargeLayer is " + BattlefieldController.battlefield.player.ChargeLayer);
+                Debug.Log("charge Modifier is " + chargeModifier);
+            }
         }
         return piece;
     }

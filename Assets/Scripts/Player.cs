@@ -19,28 +19,30 @@ public class Player : Creature
         switch (weaponType)
         {
             case "longbow":
-                weapon.Initialize(5,1000,BuffType.bleeding,0,0);
+                weapon.Initialize(6, 1000, BuffType.bleeding, 0, 0);
                 break;
         }
         this.dodgeRatePerPiece = dodgeRatePerPiece;
+        this.ChargeLayer = 0;
+        //this.DodgeRate = 0;
     }
 
-    public void Attack(int greenScore, int redScore)
-    {
-        ////green attack
-        if (greenScore != 0) {
-            weapon.GreenAction(greenScore);
-            //BoardController.board.monster.TakeDMG(greenSum );
-            //Debug.Log("Player normal attack. Green is "+ greenSum);
-        }
+    //public void Attack(int greenScore, int redScore)
+    //{
+    //    ////green attack
+    //    if (greenScore != 0) {
+    //        weapon.GreenAction(greenScore);
+    //        //BoardController.board.monster.TakeDMG(greenSum );
+    //        //Debug.Log("Player normal attack. Green is "+ greenSum);
+    //    }
 
-        //red attack: 
-        if (redScore != 0) {
-          //// power attack, add bleeding buff to monster
-            weapon.RedAction(redScore);
-            Debug.Log("Player power attack. Red is " + redScore);
-        }        
-    }
+    //    //red attack: 
+    //    if (redScore != 0) {
+    //      //// power attack, add bleeding buff to monster
+    //        weapon.RedAction(redScore);
+    //        //Debug.Log("Player power attack. Red is " + redScore);
+    //    }        
+    //}
 
     public void Dodge(int blueSum)
     {
