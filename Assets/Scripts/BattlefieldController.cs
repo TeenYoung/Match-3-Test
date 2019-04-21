@@ -51,6 +51,7 @@ public class BattlefieldController : MonoBehaviour
         MaxPurpleScore = 6;//Temp
         InitialDistance = 10;//Temp
         SetupBattlefield();
+        monster.ActionNotice(Distance);
     }
 
     public void AddScore(GameObject piece)
@@ -91,8 +92,8 @@ public class BattlefieldController : MonoBehaviour
     void InstantiateMonster()
     {
         monster = Instantiate(monsterPrefab, new Vector3(4.5f, 8.8f, 90f), Quaternion.identity).GetComponent<Monster>();
-        monster.InitializeHPSlider(200f);
-        monster.InitializeAttackInfo(10f, 5f, 5f, 1.8f);
+        monster.InitializeHPSlider(300f);
+        monster.InitializeAttackInfo(10f, 25f, 5f, 2.2f);
     }
 
     void InstantiatePlayer()
@@ -103,9 +104,11 @@ public class BattlefieldController : MonoBehaviour
 
     public void Battle()
     {
+        Debug.Log(string.Format("Blue:{0}, Black:{1}, Red:{2}, Green:{3}, Purple:{4}", blueScore, blackScore, redScore, greenScore,purpleScore));
         //monster buff trigger in turn start
         player.BuffListTrigger("TriggerAt_TurnBegin");
         monster.BuffListTrigger("TriggerAt_TurnBegin");
+        
 
         if (purpleScore == MaxPurpleScore)
         {
@@ -117,10 +120,10 @@ public class BattlefieldController : MonoBehaviour
         if (blueScore != 0)
         {
             player.Dodge(blueScore);
-            if (player.ChargeLayer != 0) // if there is charge buff, dodge will reset it 
-            {
-                player.ChargeReset();
-            }
+            //if (player.ChargeLayer != 0) // if there is charge buff, dodge will reset it 
+            //{
+            player.ChargeReset();
+            //}
             player.Move(blueScore / 3);
             blueScore = 0;
             UpdateScores();
@@ -156,9 +159,11 @@ public class BattlefieldController : MonoBehaviour
         UpdateDistance();
 
         battlefieldState = BattlefieldState.waiting;
-        print("Battle End");
+        print("------------------------------------------------------");
 
         player.DodgeReset(); //reset dodge if it haven't triggered, dodge only last one turn
+
+        monster.ActionNotice(Distance);
     }
 
     public void ResetSingleScore(string color)

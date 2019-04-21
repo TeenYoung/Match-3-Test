@@ -29,6 +29,10 @@ public class Creature : MonoBehaviour {
     public void Move(float feet)
     {
         BattlefieldController.battlefield.Distance += feet;
+        if (BattlefieldController.battlefield.Distance < 1)
+        {
+            BattlefieldController.battlefield.Distance = 1;
+        }
         Debug.Log(this.name + " move.");
     }    
 
@@ -51,7 +55,7 @@ public class Creature : MonoBehaviour {
         }
         this.ChargeReset();
 
-        Debug.Log("Chargelayer is " + this.ChargeLayer);
+        //Debug.Log("Chargelayer is " + this.ChargeLayer);
         DodgeReset();//whether dodge success or not, dodge buff reset
     }  
     
@@ -92,7 +96,7 @@ public class Creature : MonoBehaviour {
             {
                 this.ChargeLayer += System.Convert.ToInt32(num);
                 buff.BuffNum = this.ChargeLayer;
-                Debug.Log("charge layer is" + ChargeLayer);
+                //Debug.Log("charge layer is" + ChargeLayer);
             }
             else
             {
@@ -112,7 +116,7 @@ public class Creature : MonoBehaviour {
             }
             else if(buffType == BuffType.bleeding)
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 5, 0, 0, 0);                
+                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 2, 0, 0, 0);                
             }
             else if (buffType == BuffType.healing)
             {

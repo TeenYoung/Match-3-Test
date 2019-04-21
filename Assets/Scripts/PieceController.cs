@@ -175,7 +175,6 @@ public class PieceController : MonoBehaviour
                         board.moveCountText.text = (board.moveLimit - board.moveCount).ToString();
                         Swap(neighborPos);
                         battlefield.battlefieldState = BattlefieldState.battle;
-                        print("Battle Start");
                         board.StartShifting();
 
                     }

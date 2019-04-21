@@ -43,6 +43,7 @@ public class Weapon : MonoBehaviour
     //monster take damage when player normal attack, and add buff, 
     private void SingleNormalAttack(int num)
     {
+        //long bow single normal attack
         Debug.Log("Player attack.");
         this.chargeModifier = Mathf.Pow((1 + (BattlefieldController.battlefield.player.ChargeLayer) / 3f), powRate) - 1;
         BattlefieldController.battlefield.monster.TakeDMG(this.WeaponDamage *(1 + this.normalAttackRate + this.chargeModifier));
@@ -65,13 +66,18 @@ public class Weapon : MonoBehaviour
     //how many times normal attack will triggered *******************************edit retain piece info, it should = 0 if used, or retain piece
     public int GreenAction(int piece)
     {
-        if (this.greenActionNum == 0)//normal attack
+        //long bow green action
+        if (this.greenActionNum == 0)//normal attack, 
         {
             if (piece != 0)
             {
-                for (int i = 0; i < Mathf.Floor(piece / 3f); i++)
+                for (int i = 0; i < Mathf.Floor(piece / 2f); i++) //every 2 piece make 1 single normal attack
                 {
                     SingleNormalAttack(piece);
+                }
+                if(piece%2 !=0) //piece divide by 2, the remainder add one more debuff
+                {
+                    BattlefieldController.battlefield.monster.AddBuff(Debuff, 1);
                 }
             }            
         }
@@ -104,8 +110,8 @@ public class Weapon : MonoBehaviour
             {
                 BattlefieldController.battlefield.player.AddBuff(BuffType.charge, piece);
                 //this.chargeModifier = Mathf.Pow((1 + (BattlefieldController.battlefield.player.ChargeLayer) / 3f), powRate)-1;
-                //Debug.Log("ChargeLayer is " + BattlefieldController.battlefield.player.ChargeLayer);
-                Debug.Log("charge Modifier is " + chargeModifier);
+                Debug.Log("ChargeLayer is " + BattlefieldController.battlefield.player.ChargeLayer);
+                //Debug.Log("charge Modifier is " + chargeModifier);
             }
         }
         return piece;
