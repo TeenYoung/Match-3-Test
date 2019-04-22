@@ -85,7 +85,7 @@ public class Monster : Creature
         switch (nextTurnAction)
         {
             case NextTurnAction.move:
-                Debug.Log("Monster will move 3.");
+                Debug.Log("Monster will move.");
                 break;
             case NextTurnAction.powerattack:
                 Debug.Log("Monster will make " + NormalAttackDMG * PowerAttackMultiply + " power attack.");

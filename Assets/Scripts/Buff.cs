@@ -47,6 +47,7 @@ public class Buff : MonoBehaviour
         if (type == BuffType.dodge) //show dodge rate
         {
             this.BuffNum = System.Convert.ToInt32(dodgeRate);
+            //Debug.Log("Add dodge, rate = " + BuffNum);
         }
         else if (type == BuffType.charge)
         {
@@ -61,8 +62,7 @@ public class Buff : MonoBehaviour
         this.gameObject.tag = tagName;
         //this.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>(imgPath) as Sprite; //need to re-edit
 
-        this.bleedingDMGRate = bleedingDMGRate;
-        
+        this.bleedingDMGRate = bleedingDMGRate;        
         this.creature.ChargeLayer = chargeLayer;
         this.creature.DodgeRate = dodgeRate;
         this.healHP = healHP;

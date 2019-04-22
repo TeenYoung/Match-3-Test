@@ -39,6 +39,7 @@ public class Creature : MonoBehaviour {
     public void TakeDMG(float dmg)
     {
         float r = Random.Range(0, 100f); // use to calculate if dodge success
+        //Debug.Log("Dodge rate = " + this.DodgeRate);
         if ( this.DodgeRate != 0 && r <= this.DodgeRate) 
         {
             Debug.Log("Attack miss! Random is " + r);           
@@ -49,13 +50,16 @@ public class Creature : MonoBehaviour {
             {
                 Debug.Log("Dodge failed. Random is " + r);
             }
+            //if(this.DodgeRate == 0)
+            //{
+            //    Debug.Log("No dodge.");
+            //}            
             Debug.Log(this.name + "take dmg" + dmg);
             this.CurrentHP -= dmg;
             SetHPSlider();            
         }
         this.ChargeReset();
-
-        //Debug.Log("Chargelayer is " + this.ChargeLayer);
+        
         DodgeReset();//whether dodge success or not, dodge buff reset
     }  
     
@@ -97,6 +101,11 @@ public class Creature : MonoBehaviour {
                 this.ChargeLayer += System.Convert.ToInt32(num);
                 buff.BuffNum = this.ChargeLayer;
                 //Debug.Log("charge layer is" + ChargeLayer);
+            } 
+            if(buffType == BuffType.dodge)
+            {
+                this.DodgeRate += num;
+                buff.BuffNum = System.Convert.ToInt32(DodgeRate);
             }
             else
             {

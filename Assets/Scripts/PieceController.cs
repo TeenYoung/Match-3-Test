@@ -176,7 +176,6 @@ public class PieceController : MonoBehaviour
                         Swap(neighborPos);
                         battlefield.battlefieldState = BattlefieldState.battle;
                         board.StartShifting();
-
                     }
 
                     // Play sound effect of swap back if will not match
