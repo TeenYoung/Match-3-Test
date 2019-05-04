@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
     public float WeaponDamage { get; set; } // normal dagame
     public float WeaponRange { get; set; }
     public float PowerAttackMultiply { get; set; } //power attack dmg = Damage * PowerAttackMultiply
-    public BuffType Debuff { get; set; } //add debuff when normal attack make damage
+    public string Debuff { get; set; } //add debuff when normal attack make damage
 
     /* 
      */
@@ -28,7 +28,7 @@ public class Weapon : MonoBehaviour
     /// <param name="powerAttackMultiply">power attack dmg = Damage * PowerAttackMultiply, default value = 1</param>
     /// <param name="normalAttackRate"> default value = 1</param>
     /// <param name="powerAttackRate"> default value = 1</param>
-    public void Initialize(float dmg, float range, BuffType debuff, int greenActionNum, int redActionNum,  float powerAttackMultiply = 1, float normalAttackRate = 0, float powerAttackRate = 1)
+    public void Initialize(float dmg, float range, string debuff, int greenActionNum, int redActionNum,  float powerAttackMultiply = 1, float normalAttackRate = 0, float powerAttackRate = 1)
     {
         this.WeaponDamage = dmg;
         this.WeaponRange = range;
@@ -108,7 +108,7 @@ public class Weapon : MonoBehaviour
         {
             if (piece != 0)
             {
-                BattlefieldController.battlefield.player.AddBuff(BuffType.charge, piece);
+                BattlefieldController.battlefield.player.AddBuff("Charge", piece);
                 //this.chargeModifier = Mathf.Pow((1 + (BattlefieldController.battlefield.player.ChargeLayer) / 3f), powRate)-1;
                 Debug.Log("ChargeLayer is " + BattlefieldController.battlefield.player.ChargeLayer);
                 //Debug.Log("charge Modifier is " + chargeModifier);

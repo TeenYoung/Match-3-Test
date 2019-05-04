@@ -41,7 +41,7 @@ public class ItemController : MonoBehaviour
     {
         if (selectedItem.RecoverTurns > 0)
         {
-            BattlefieldController.battlefield.player.AddBuff(BuffType.healing, selectedItem.RecoverHP, selectedItem.RecoverTurns);
+            BattlefieldController.battlefield.player.AddBuff("Healing", selectedItem.RecoverHP, selectedItem.RecoverTurns);
         }
         else if (selectedItem.RecoverHP > 0)
         {

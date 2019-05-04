@@ -59,7 +59,6 @@ public class PieceController : MonoBehaviour
             Vector3Int neighborDown = myPosition + Vector3Int.down;
             neighborPoses.Add(neighborDown);
         }
-
         
     }
 

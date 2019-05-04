@@ -90,19 +90,19 @@ public class Creature : MonoBehaviour {
     }
 
     //default buff work turn =1, if buff exist in list , add turns; if not , add new buff
-    public void AddBuff(BuffType buffType,float num, int buffTurn = 1)
+    public void AddBuff(string buffName,float num, int buffTurn = 1)
     {
-        Buff buff = BuffList.Find(x => x.type == buffType);
+        Buff buff = BuffList.Find(x => x.buffName == buffName);
         //GameObject buffObj = buff.gameObject;        
         if (buff)
         {
-            if (buffType == BuffType.charge) //charge buff add charge layer
+            if (buffName == "charge") //charge buff add charge layer
             {
                 this.ChargeLayer += System.Convert.ToInt32(num);
                 buff.BuffNum = this.ChargeLayer;
                 //Debug.Log("charge layer is" + ChargeLayer);
             } 
-            if(buffType == BuffType.dodge)
+            if(buffName == "Dodge")
             {
                 this.DodgeRate += num;
                 buff.BuffNum = System.Convert.ToInt32(DodgeRate);
@@ -119,22 +119,22 @@ public class Creature : MonoBehaviour {
             buff = buffObj.GetComponent<Buff>();
             // search buff type in database and generat object then get Buff instance and initialize it ************************** edit here with database info and wrap spl commends 
             
-            if(buffType == BuffType.dodge)//use piece to calculate dodge rate,
+            if(buffName == "Dodge")//use piece to calculate dodge rate
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, num, 0, 0);                
+                buff.Initialize(buffName, buffTurn, buffZone.transform, this, Color.blue, "TriggerAt_TakeDMG", 0, num, 0, 0);                
             }
-            else if(buffType == BuffType.bleeding)
+            else if(buffName == "Bleeding")
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 2, 0, 0, 0);                
+                buff.Initialize(buffName, buffTurn, buffZone.transform, this, Color.red, "TriggerAt_TurnBegin", 2, 0, 0, 0);                
             }
-            else if (buffType == BuffType.healing)
+            else if (buffName == "Healing")
             {
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num, 0);
+                buff.Initialize(buffName, buffTurn, buffZone.transform, this, Color.green, "TriggerAt_TurnBegin", 0, 0, num, 0);
             }
-            else if(buffType == BuffType.charge)
+            else if(buffName == "Charge")
             {
                 //this.ChargeLayer = System.Convert.ToInt32(num);
-                buff.Initialize(buffType, buffTurn, buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0, System.Convert.ToInt32(num));                
+                buff.Initialize(buffName, buffTurn, buffZone.transform, this, Color.yellow, "TriggerAt_Attack", 0, 0, 0, System.Convert.ToInt32(num));                
             }
             BuffList.Add(buff);
         }
@@ -165,7 +165,7 @@ public class Creature : MonoBehaviour {
     
     public void DodgeReset()
     {
-        Buff buff = BuffList.Find(x => x.type == BuffType.dodge);
+        Buff buff = BuffList.Find(x => x.buffName == "Dodge");
         BuffList.Remove(buff);
         this.DodgeRate = 0;
         if (buff)
@@ -176,7 +176,7 @@ public class Creature : MonoBehaviour {
 
     public void ChargeReset()
     {
-        Buff buff = BuffList.Find(x => x.type == BuffType.charge);
+        Buff buff = BuffList.Find(x => x.buffName == "Charge");
         BuffList.Remove(buff);
         this.ChargeLayer = 0;
         if (buff)

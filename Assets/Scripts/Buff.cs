@@ -4,33 +4,31 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public enum BuffType
-{
-    power,
-    dodge,
-    stunning,
-    bleeding,
-    healing,
-    charge,
-}
+//public enum BuffType
+//{
+//    power,
+//    dodge,
+//    stunning,
+//    bleeding,
+//    healing,
+//    charge,
+//}
 
 public class Buff : MonoBehaviour
 {   
     public Text BuffText;
-    public BuffType type;
+    public string buffName;
     public Creature creature;
 
     public int BuffNum { get; set; }
 
     float bleedingDMGRate;
     float healHP;
-
-
-
+       
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="type"></param>
+    /// <param name="buffName"></param>
     /// <param name="remainTurn"></param>
     /// <param name="buffZone"></param>
     /// <param name="creature"></param>
@@ -39,17 +37,17 @@ public class Buff : MonoBehaviour
     /// <param name="bleedingDMGRate"></param>
     /// <param name="dodgeRate"></param>
     ////public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Image image, string tagName,float bleedingDMGRate, float dodgeRate
-    public void Initialize(BuffType type, int remainTurn, Transform buffZone, Creature creature, Color color, string tagName,float bleedingDMGRate, float dodgeRate,float healHP, int chargeLayer)
+    public void Initialize(string buffName, int remainTurn, Transform buffZone, Creature creature, Color color, string tagName,float bleedingDMGRate, float dodgeRate,float healHP, int chargeLayer)
     {
-        this.type = type;
+        this.buffName = buffName;
 
         //buff num depends on buff type
-        if (type == BuffType.dodge) //show dodge rate
+        if (this.buffName == "Dodge") //show dodge rate
         {
             this.BuffNum = System.Convert.ToInt32(dodgeRate);
             //Debug.Log("Add dodge, rate = " + BuffNum);
         }
-        else if (type == BuffType.charge)
+        else if (this.buffName == "Charge")
         {
             this.BuffNum = chargeLayer;
             //Debug.Log("Charge buff added.");
@@ -68,7 +66,6 @@ public class Buff : MonoBehaviour
         this.healHP = healHP;
         this.gameObject.transform.SetParent(buffZone);
         UpdateBuffTurnText();
-
     }
 
     public void UpdateBuffTurnText()
@@ -80,7 +77,7 @@ public class Buff : MonoBehaviour
     {
         if (bleedingDMGRate != 0)
         {            
-            Debug.Log(creature.name + type + " dmg " + BuffNum * bleedingDMGRate);
+            Debug.Log(creature.name + buffName + " dmg " + BuffNum * bleedingDMGRate);
             creature.TakeDMG(BuffNum * bleedingDMGRate);
             this.BuffNum--;
             UpdateBuffTurnText();
@@ -96,8 +93,6 @@ public class Buff : MonoBehaviour
             creature.Heal(healHP);
             this.BuffNum--;
             UpdateBuffTurnText();
-        }
-        
+        }        
     }
-
 }

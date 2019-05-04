@@ -19,7 +19,7 @@ public class Player : Creature
         switch (weaponType)
         {
             case "longbow":
-                weapon.Initialize(6, 1000, BuffType.bleeding, 0, 0);
+                weapon.Initialize(6, 1000, "Bleeding", 0, 0);
                 break;
         }
         this.dodgeRatePerPiece = dodgeRatePerPiece;
@@ -46,7 +46,7 @@ public class Player : Creature
 
     public void Dodge(int blueSum)
     {
-        AddBuff(BuffType.dodge, blueSum * dodgeRatePerPiece);
+        AddBuff("Dodge", blueSum * dodgeRatePerPiece);
     }
     
     //player use items
