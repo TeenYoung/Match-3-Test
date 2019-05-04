@@ -22,7 +22,7 @@ public class ItemController : MonoBehaviour
             Item item = Instantiate(itemPrefab, transform).GetComponent<Item>();
             item.name = itemNames[i];
             item.SetItem(recoverHPs[i], recoverTurns[i]);
-            items.Add(item);           
+            items.Add(item);
         }
 
         selectedItem = items[1];//temp
