@@ -89,8 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19e4f0b648c27cf40a198734e87a6ea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BuffText: {fileID: 7082277991094913060}
-  type: 0
+  buffText: {fileID: 7082277991094913060}
+  buffName: 
   creature: {fileID: 0}
 --- !u!114 &432296148774953472
 MonoBehaviour:
